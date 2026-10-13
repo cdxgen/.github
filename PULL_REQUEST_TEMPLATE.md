@@ -16,4 +16,4 @@ Tick the one that fits. Spelling and grammar fixes and trivial autocomplete do n
 
 Tools or models used (optional):
 
-- [ ] I have read the whole diff, the tests pass, and I can explain and maintain this change.
+- [ ] The tests pass, and I can explain and maintain this change.

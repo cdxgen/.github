@@ -12,14 +12,14 @@ Thanks for helping out. This guide applies to every repository in the cdxgen org
 
 - Keep each pull request focused on one change, and explain what changed and why in plain words.
 - Add or update tests and documentation along with the change, and make sure the required checks pass.
-- A maintainer merges every pull request opened by a person or an AI agent. Dependency update bots such as Renovate may merge routine updates on their own once the checks pass.
+- A maintainer merges pull requests from outside contributors. The maintainers' own agent-made changes, and routine dependency updates from bots such as Renovate, may merge automatically once the required checks pass.
 
 ## Using AI tools
 
 AI coding assistants and agents are welcome here, and the maintainers use them for most of their own work. What we ask in return:
 
 - **Disclose material AI use.** Pick the level that fits in the pull request template, and a maintainer will add the matching label below. Spelling and grammar fixes, translating your own words, and trivial autocomplete do not need disclosure.
-- **Own the change.** You are responsible for everything you submit, including anything an agent did on your behalf. Read the diff, run the tests, and be ready to explain and maintain the change.
+- **Own the change.** You are responsible for everything you submit, including anything an agent did on your behalf. Make sure the change works and the tests pass, and be ready to explain and maintain it.
 - **Agents act on behalf of a person.** An agent may open pull requests or issues under your own account as long as its AI use is disclosed, and you are the responsible person. A separate automated account must say that it is automated and name the person responsible for it.
 - **Respect licenses and privacy.** Only submit content you have the right to contribute. Do not put secrets, credentials or other people's private data into prompts.
 - **No low-effort output.** Unreviewed or unverified AI output may be closed without review. This includes AI-generated vulnerability reports without a working reproduction.
