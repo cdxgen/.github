@@ -12,7 +12,6 @@ Thanks for helping out. This guide applies to every repository in the cdxgen org
 
 - Keep each pull request focused on one change, and explain what changed and why in plain words.
 - Add or update tests and documentation along with the change, and make sure the required checks pass.
-- A maintainer merges pull requests from outside contributors. The maintainers' own agent-made changes, and routine dependency updates from bots such as Renovate, may merge automatically once the required checks pass.
 
 ## Using AI tools
 
