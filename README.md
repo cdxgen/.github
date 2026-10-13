@@ -6,3 +6,4 @@ Default community health files for the [cdxgen](https://github.com/cdxgen) organ
 - [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md): the default pull request description
 - [SECURITY.md](SECURITY.md): how to report a vulnerability
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md): the code of conduct for all cdxgen spaces
+- [profile/README.md](profile/README.md): the introduction shown on the organization's GitHub page

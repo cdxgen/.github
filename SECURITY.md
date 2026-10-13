@@ -4,7 +4,7 @@ This policy applies to every repository in the cdxgen organization that does not
 
 ## Reporting a vulnerability
 
-Please do not report security issues in public issues, discussions or pull requests. Instead, email [security@cyclonedx.org](mailto:security@cyclonedx.org) with the word **"SECURITY"** in the subject line. Include:
+Please do not report security issues in public issues, discussions or pull requests. Instead, email [cloud@appthreat.com](mailto:cloud@appthreat.com) with the word **"SECURITY"** in the subject line. Include:
 
 - the affected repository and version
 - steps to reproduce the issue, or a proof of concept
