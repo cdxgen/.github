@@ -86,20 +86,30 @@ function run(eventName, payload, stubOptions = {}) {
 }
 
 describe("sync.mjs", { skip: process.platform === "win32" }, () => {
-  it("adds a new issue in Triage with its autonomy and area", () => {
-    const writes = run("issues", {
-      action: "opened",
-      issue: {
-        node_id: "issue-node",
-        number: 7,
-        state: "open",
-        labels: [{ name: "ai-auto" }, { name: "lang:python" }],
+  it("sets Blocked when the blocked label is added", () => {
+    const writes = run(
+      "issues",
+      {
+        action: "labeled",
+        label: { name: "blocked" },
+        issue: { node_id: "issue-node", number: 7, state: "open", labels: [{ name: "blocked" }] },
       },
-    });
+      { currentStatus: "Ready" },
+    );
     assert.deepEqual(
       writes.map((w) => w.option),
-      ["option-Triage", "option-Auto", "option-Python"],
+      ["option-Blocked"],
     );
+  });
+
+  it("leaves issue opened, closed and reopened to the built-in workflows", () => {
+    for (const action of ["opened", "closed", "reopened"]) {
+      const writes = run("issues", {
+        action,
+        issue: { node_id: "issue-node", number: 7, state: "open", labels: [{ name: "lang:python" }] },
+      });
+      assert.equal(writes.length, 0, action);
+    }
   });
 
   it("does nothing without a project number", () => {

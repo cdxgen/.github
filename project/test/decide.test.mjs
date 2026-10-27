@@ -26,74 +26,55 @@ const pullEvent = (action, extra = {}) => ({
 });
 
 describe("pickLabelOption", () => {
-  it("prefers the strongest autonomy label", () => {
-    const map = labelFields.find((f) => f.field === "Autonomy").map;
-    assert.equal(pickLabelOption(["ai-assist", "ai-auto"], map), "Auto");
+  const map = labelFields.find((f) => f.field === "Area").map;
+
+  it("prefers the label listed first in the mapping", () => {
+    assert.equal(pickLabelOption(["lang:python", "lang:node"], map), "JavaScript");
   });
 
   it("returns undefined when no label is mapped", () => {
-    const map = labelFields.find((f) => f.field === "Autonomy").map;
     assert.equal(pickLabelOption(["bug"], map), undefined);
   });
 });
 
 describe("decideForIssue", () => {
-  it("puts a new issue in Triage and copies labels to fields", () => {
+  it("sets Blocked when the blocked label is added", () => {
     const changes = decideForIssue(
-      issueEvent("opened", ["ai-auto", "lang:go"]),
-      {},
-      labelFields,
-    );
-    assert.deepEqual(changes, [
-      { field: "Status", option: "Triage", onlyIfUnset: true },
-      { field: "Autonomy", option: "Auto", onlyIfUnset: false },
-      { field: "Area", option: "Go", onlyIfUnset: false },
-    ]);
-  });
-
-  it("marks a closed issue Done", () => {
-    const changes = decideForIssue(issueEvent("closed"), {}, labelFields);
-    assert.deepEqual(changes, [
-      { field: "Status", option: "Done", onlyIfUnset: false },
-    ]);
-  });
-
-  it("moves a reopened Done issue back to Backlog only", () => {
-    assert.equal(
-      decideForIssue(issueEvent("reopened"), { status: "Done" }, labelFields)[0]
-        .option,
-      "Backlog",
-    );
-    assert.equal(
-      decideForIssue(issueEvent("reopened"), { status: "Ready" }, labelFields)[0]
-        .onlyIfUnset,
-      true,
-    );
-  });
-
-  it("blocks on the blocked label and releases when it is removed", () => {
-    const blocked = decideForIssue(
       issueEvent("labeled", ["blocked"], "blocked"),
-      {},
-      labelFields,
-    );
-    assert.equal(blocked[0].option, "Blocked");
-    const released = decideForIssue(
-      issueEvent("unlabeled", [], "blocked"),
-      { status: "Blocked" },
-      labelFields,
-    );
-    assert.equal(released[0].option, "Backlog");
-  });
-
-  it("leaves a status a person chose when an unrelated label changes", () => {
-    const changes = decideForIssue(
-      issueEvent("labeled", ["bug"], "bug"),
       { status: "Ready" },
       labelFields,
     );
     assert.deepEqual(changes, [
-      { field: "Status", option: "Triage", onlyIfUnset: true },
+      { field: "Status", option: "Blocked", onlyIfUnset: false },
+    ]);
+  });
+
+  it("returns a Blocked issue to Backlog when the label is removed", () => {
+    const changes = decideForIssue(
+      issueEvent("unlabeled", [], "blocked"),
+      { status: "Blocked" },
+      labelFields,
+    );
+    assert.equal(changes[0].option, "Backlog");
+  });
+
+  it("keeps another status when blocked is removed", () => {
+    const changes = decideForIssue(
+      issueEvent("unlabeled", [], "blocked"),
+      { status: "Ready" },
+      labelFields,
+    );
+    assert.equal(changes.some((c) => c.field === "Status"), false);
+  });
+
+  it("copies an area label to the Area field without touching Status", () => {
+    const changes = decideForIssue(
+      issueEvent("labeled", ["lang:go"], "lang:go"),
+      { status: "Ready" },
+      labelFields,
+    );
+    assert.deepEqual(changes, [
+      { field: "Area", option: "Go", onlyIfUnset: false },
     ]);
   });
 });
@@ -191,23 +172,22 @@ describe("decideForPullRequest", () => {
 
   it("only fills empty fields from pull request labels", () => {
     const changes = decideForPullRequest(
-      pullEvent("opened", { labels: ["ai-auto"] }),
+      pullEvent("opened", { labels: ["lang:go"] }),
       open,
       labelFields,
     );
     assert.deepEqual(changes[1], {
-      field: "Autonomy",
-      option: "Auto",
+      field: "Area",
+      option: "Go",
       onlyIfUnset: true,
     });
   });
 });
 
 describe("decideForBackfill", () => {
-  it("sets Triage and label fields only where nothing is set", () => {
-    assert.deepEqual(decideForBackfill(["ai-pair", "lang:rust"], labelFields), [
+  it("sets Triage and Area only where nothing is set", () => {
+    assert.deepEqual(decideForBackfill(["lang:rust"], labelFields), [
       { field: "Status", option: "Triage", onlyIfUnset: true },
-      { field: "Autonomy", option: "Pair", onlyIfUnset: true },
       { field: "Area", option: "Rust", onlyIfUnset: true },
     ]);
   });

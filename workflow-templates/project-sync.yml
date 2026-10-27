@@ -4,7 +4,7 @@ name: Project sync
 # See https://github.com/cdxgen/.github/tree/main/project
 on:
   issues:
-    types: [opened, reopened, closed, labeled, unlabeled]
+    types: [labeled, unlabeled]
   pull_request_target:
     types: [opened, reopened, edited, ready_for_review, converted_to_draft, closed, labeled]
 

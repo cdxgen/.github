@@ -1,5 +1,8 @@
 #!/usr/bin/env node
-// Reflects one issue or pull request event onto the organization project.
+// Reflects the events that the project's built-in workflows cannot handle onto
+// the organization project: the blocked label, labels that fill Area, and pull
+// requests to branches other than the default, whose closing keywords GitHub
+// does not record.
 //
 // It runs inside the reusable workflow in .github/workflows/project-sync.yml
 // and reads the event from GITHUB_EVENT_PATH. Every value from the event is
@@ -84,7 +87,12 @@ function closedIssues(pr, repository) {
 const names = (labels) => (labels ?? []).map((l) => l.name);
 
 if (eventName === "issues") {
+  // Only label changes matter here. The built-in workflows cover the rest.
   const { action, issue } = payload;
+  if (action !== "labeled" && action !== "unlabeled") {
+    console.log(`Issue action ${action} is handled by the built-in workflows.`);
+    process.exit(0);
+  }
   const itemId = addToProject(issue.node_id);
   const values = currentValues(itemId);
   const event = {
