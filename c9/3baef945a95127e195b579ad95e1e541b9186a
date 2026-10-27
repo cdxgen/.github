@@ -1,0 +1,31 @@
+.github/workflows/project-sync.yml
+  s_7259a555d05c3e::t_aa2d72d490bef4 22-27,49-57,60,69-71
+project/README.md
+  s_7259a555d05c3e::t_8eb69a99a875bc 51-52
+project/backfill.mjs
+  s_7259a555d05c3e::t_7596a4d55358f9 15,19
+project/lib/schema.mjs
+  s_7259a555d05c3e::t_f6d6280af916e7 1-23
+project/setup.mjs
+  s_7259a555d05c3e::t_00dd64bd67f396 16,19
+project/sync.mjs
+  s_7259a555d05c3e::t_29429710d3be63 19,24
+project/test/schema-loader.test.mjs
+  s_7259a555d05c3e::t_174aea84177676 1-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c93baef945a95127e195b579ad95e1e541b9186a",
+  "prompts": {},
+  "sessions": {
+    "s_7259a555d05c3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "369df51b-6592-47e6-a54c-85110ab6d9b9",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
