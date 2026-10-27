@@ -247,17 +247,24 @@ function ensureIssueTypes() {
     }
     say(`create issue type ${type.name}`);
     if (apply) {
-      execFileSync(
-        "gh",
-        [
-          "api", `orgs/${owner}/issue-types`, "--method", "POST",
-          "-f", `name=${type.name}`,
-          "-f", `description=${type.description}`,
-          "-f", `color=${type.color}`,
-          "-F", "is_enabled=true",
-        ],
-        { stdio: "inherit" },
-      );
+      try {
+        execFileSync(
+          "gh",
+          [
+            "api", `orgs/${owner}/issue-types`, "--method", "POST",
+            "-f", `name=${type.name}`,
+            "-f", `description=${type.description}`,
+            "-f", `color=${type.color}`,
+            "-F", "is_enabled=true",
+          ],
+          { stdio: "pipe" },
+        );
+      } catch (error) {
+        console.warn(
+          `Could not create issue type ${type.name}. Creating one needs the admin:org scope ` +
+            `(gh auth refresh -s admin:org), or add it by hand in the organization settings.\n${error.stderr ?? ""}`,
+        );
+      }
     }
   }
 }
