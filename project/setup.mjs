@@ -64,14 +64,21 @@ function ensureSettings(project) {
   ) {
     say(`set visibility to ${schema.public ? "public" : "private"} and the short description`);
     if (apply) {
-      graphql(
-        `mutation($id: ID!, $public: Boolean!, $desc: String!) {
-           updateProjectV2(input: { projectId: $id, public: $public, shortDescription: $desc }) {
-             projectV2 { id }
-           }
-         }`,
-        { id: project.id, public: schema.public, desc: schema.shortDescription },
-      );
+      try {
+        graphql(
+          `mutation($id: ID!, $public: Boolean!, $desc: String!) {
+             updateProjectV2(input: { projectId: $id, public: $public, shortDescription: $desc }) {
+               projectV2 { id }
+             }
+           }`,
+          { id: project.id, public: schema.public, desc: schema.shortDescription },
+        );
+      } catch (error) {
+        console.warn(
+          `Could not change visibility or description: ${error.message}. ` +
+            "An organization owner may have to allow public projects, or set it in the project settings.",
+        );
+      }
     }
   }
 }
