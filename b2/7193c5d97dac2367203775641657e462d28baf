@@ -1,0 +1,21 @@
+project/lib/items.mjs
+  s_7259a555d05c3e::t_62173b02adb194 22-54
+project/test/backfill.test.mjs
+  s_7259a555d05c3e::t_78ad10996b555e 39-43,70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b27193c5d97dac2367203775641657e462d28baf",
+  "prompts": {},
+  "sessions": {
+    "s_7259a555d05c3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "369df51b-6592-47e6-a54c-85110ab6d9b9",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
