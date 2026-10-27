@@ -19,6 +19,12 @@ on:
         description: Ref of cdxgen/.github that holds the scripts. Pin a commit to freeze behavior.
         type: string
         default: main
+      schema-repository:
+        description: >-
+          Repository, such as owasp-dep-scan/.github, whose project/schema.json
+          replaces the schema bundled here. Leave empty to use this one.
+        type: string
+        default: ""
     secrets:
       PROJECT_TOKEN:
         description: Token with write access to organization projects
@@ -40,8 +46,18 @@ jobs:
           sparse-checkout: project
           persist-credentials: false
 
+      - name: Fetch the organization's schema
+        if: ${{ inputs.schema-repository != '' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ inputs.schema-repository }}
+          path: schema
+          sparse-checkout: project/schema.json
+          persist-credentials: false
+
       - name: Update the project
         env:
+          SCHEMA_REPOSITORY: ${{ inputs.schema-repository }}
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
           PROJECT_OWNER: ${{ github.repository_owner }}
           PROJECT_NUMBER: ${{ inputs.project-number }}
@@ -49,5 +65,8 @@ jobs:
           if [ -z "$GH_TOKEN" ]; then
             echo "PROJECT_TOKEN is not available to this repository. Skipping."
             exit 0
+          fi
+          if [ -n "$SCHEMA_REPOSITORY" ]; then
+            export PROJECT_SCHEMA="$GITHUB_WORKSPACE/schema/project/schema.json"
           fi
           node project/sync.mjs

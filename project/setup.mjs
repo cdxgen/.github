@@ -11,14 +11,12 @@
 // https://docs.github.com/en/issues/planning-and-tracking-with-projects/automating-your-project/using-the-api-to-manage-projects
 
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
 import process from "node:process";
 
+import { loadSchema } from "./lib/schema.mjs";
 import { findProject, graphql } from "./lib/github.mjs";
 
-const schema = JSON.parse(
-  readFileSync(new URL("./schema.json", import.meta.url), "utf8"),
-);
+const schema = loadSchema(process.argv.slice(2), process.env);
 const apply = process.argv.includes("--apply");
 const allowRemoval = process.argv.includes("--allow-option-removal");
 const owner = schema.owner;

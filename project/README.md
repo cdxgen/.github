@@ -48,6 +48,8 @@ Create a token that can write to organization projects. A GitHub App with the or
 
 Two events for the same item can overlap, in which case the later write wins for that field; the rules are written so that this never loses a status a person chose. Each repository then adds the [project-sync starter workflow](../workflow-templates/project-sync.yml), which calls the reusable workflow in [.github/workflows/project-sync.yml](../.github/workflows/project-sync.yml). The reusable workflow does not check out the calling repository, so it is safe to trigger from `pull_request_target`; the [GitHub Security Lab write-up](https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/) explains the risk it avoids. Without the secret the workflow prints a message and does nothing.
 
+Another organization keeps its own `project/schema.json` in its own `.github` repository and runs these same scripts. The scripts take the schema from `--schema <path>` or the `PROJECT_SCHEMA` variable, and the reusable workflow takes an optional `schema-repository` input that fetches `project/schema.json` from that repository. For example, `node project/setup.mjs --schema ../../owasp/.github/project/schema.json` prepares that organization's board.
+
 To try the sync without writing, set `DRY_RUN=1` and run `node project/sync.mjs` with `GITHUB_EVENT_NAME` and `GITHUB_EVENT_PATH` pointing at a saved event payload.
 
 ## Tests

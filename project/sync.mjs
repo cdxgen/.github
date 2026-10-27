@@ -16,13 +16,12 @@ import { readFileSync } from "node:fs";
 import process from "node:process";
 
 import { decideForIssue, decideForPullRequest } from "./lib/decide.mjs";
+import { loadSchema } from "./lib/schema.mjs";
 import { findProject, graphql } from "./lib/github.mjs";
 import { createItemWriter } from "./lib/items.mjs";
 import { parseClosingReferences } from "./lib/references.mjs";
 
-const schema = JSON.parse(
-  readFileSync(new URL("./schema.json", import.meta.url), "utf8"),
-);
+const schema = loadSchema(process.argv.slice(2), process.env);
 const dryRun = process.env.DRY_RUN === "1";
 
 const owner = process.env.PROJECT_OWNER;
