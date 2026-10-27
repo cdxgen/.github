@@ -36,6 +36,11 @@ if (q.includes("projectsV2")) {
   data = { repository: { issues: { pageInfo: { hasNextPage: false, endCursor: null },
     nodes: [{ id: "i1", number: 1, labels: { nodes: [{ name: "lang:go" }] } },
             { id: "i2", number: 2, labels: { nodes: [] } }] } } };
+} else if (q.includes("addProjectV2ItemById") && request.variables.content === "i2") {
+  console.error("Content already exists in this project");
+  process.exit(1);
+} else if (q.includes("projectItems")) {
+  data = { node: { projectItems: { nodes: [{ id: "item-existing", project: { id: "project-1" } }] } } };
 } else if (q.includes("addProjectV2ItemById")) {
   appendFileSync(${JSON.stringify(log)}, "add " + request.variables.content + "\\n");
   data = { addProjectV2ItemById: { item: { id: "item-" + request.variables.content } } };
@@ -62,8 +67,7 @@ process.stdout.write(JSON.stringify({ data }));
       "add i1",
       "set item-i1 option-Triage",
       "set item-i1 option-Go",
-      "add i2",
-      "set item-i2 option-Triage",
+      "set item-existing option-Triage",
     ]);
   });
 });
