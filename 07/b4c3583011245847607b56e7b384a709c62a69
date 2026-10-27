@@ -1,0 +1,61 @@
+.github/workflows/project-tests.yml
+  s_7259a555d05c3e::t_73cd56bad87541 1-26
+project/lib/github.mjs
+  s_7259a555d05c3e::t_0e71cbad686829 29
+  s_7259a555d05c3e::t_c1564dff75250f 1-28,30-69
+project/lib/decide.mjs
+  s_7259a555d05c3e::t_d74740891656bf 1-130
+project/test/sync.test.mjs
+  s_7259a555d05c3e::t_550274c3f9c107 1-154
+workflow-templates/project-sync.properties.json
+  s_7259a555d05c3e::t_37b87b517924c1 1-6
+plans/TEMPLATE.md
+  s_7259a555d05c3e::t_4160aff22a7626 1-36
+project/sync.mjs
+  s_7259a555d05c3e::t_6ceabcf906cfbf 151
+  s_7259a555d05c3e::t_9be4ca517501cf 122
+  s_7259a555d05c3e::t_32e0bda59e17a8 1-121,123-150,152-163
+plans/corpus-manifest.schema.json
+  s_7259a555d05c3e::t_decc8c885284c2 1-55
+.github/workflows/project-sync.yml
+  s_7259a555d05c3e::t_80455a4efdccb3 1-53
+project/test/decide.test.mjs
+  s_7259a555d05c3e::t_8a70298e685f33 1-160
+workflow-templates/project-sync.yml
+  s_7259a555d05c3e::t_c531fdc275bc19 19-20
+  s_7259a555d05c3e::t_90cd7ff71c8b97 1-18,21-26
+project/README.md
+  s_7259a555d05c3e::t_9419d9ef6732d0 1-44
+ISSUE_TEMPLATE/epic.yml
+  s_7259a555d05c3e::t_c74c05c29c5012 1-39
+project/setup.mjs
+  s_7259a555d05c3e::t_53d405e75636d7 63-67
+  s_7259a555d05c3e::t_5fe4a81d4c8261 1-62,68-249
+project/schema.json
+  s_7259a555d05c3e::t_d5b72a3be57994 1-91,93-121
+  s_7259a555d05c3e::t_ac8096dd8a9b96 92
+plans/README.md
+  s_7259a555d05c3e::t_4777dba61d322f 1-34
+project/test/schema.test.mjs
+  s_7259a555d05c3e::t_fed30f759c0747 1-45
+PULL_REQUEST_TEMPLATE.md
+  s_7259a555d05c3e::t_c9ec900ee57956 5-8
+README.md
+  s_7259a555d05c3e::t_c22da3526283b2 10-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "07b4c3583011245847607b56e7b384a709c62a69",
+  "prompts": {},
+  "sessions": {
+    "s_7259a555d05c3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "369df51b-6592-47e6-a54c-85110ab6d9b9",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
