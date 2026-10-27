@@ -2,6 +2,10 @@
 
 ## What and why
 
+## Linked issue
+
+Write `Closes #123` so the project board follows this pull request. Use `Refs #123` for an epic or a partial change.
+
 ## How was this tested?
 
 ## AI use

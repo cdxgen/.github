@@ -1,0 +1,6 @@
+{
+  "name": "Project sync",
+  "description": "Keep the cdxgen organization project in step with issues and pull requests.",
+  "iconName": "octicon project",
+  "categories": ["Automation"]
+}

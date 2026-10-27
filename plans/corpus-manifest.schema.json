@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/cdxgen/.github/blob/main/plans/corpus-manifest.schema.json",
+  "title": "Corpus manifest",
+  "description": "Describes data that a plan depends on and that is stored outside the repository history.",
+  "type": "object",
+  "required": ["plan", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "plan": {
+      "type": "string",
+      "description": "File name of the plan this manifest belongs to."
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "source", "sha256", "license", "storage"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "source": {
+            "type": "string",
+            "description": "Where the data came from: a URL, a repository and commit, or a description of how it was produced."
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "sizeBytes": { "type": "integer", "minimum": 0 },
+          "license": {
+            "type": "string",
+            "description": "SPDX license identifier, or a statement of why redistribution is allowed."
+          },
+          "storage": {
+            "type": "object",
+            "required": ["kind", "location"],
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "enum": ["repository", "release-asset", "oci", "lfs"]
+              },
+              "location": {
+                "type": "string",
+                "description": "Path, release asset URL, or OCI reference that holds the bytes."
+              }
+            }
+          },
+          "containsPersonalData": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
