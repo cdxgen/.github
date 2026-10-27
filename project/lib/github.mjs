@@ -27,6 +27,7 @@ const PROJECT_FIELDS = `
   title
   public
   shortDescription
+  repositories(first: 50) { nodes { nameWithOwner } }
   fields(first: 50) {
     nodes {
       ... on ProjectV2Field { id name dataType }

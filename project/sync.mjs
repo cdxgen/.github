@@ -17,6 +17,8 @@ import process from "node:process";
 
 import { decideForIssue, decideForPullRequest } from "./lib/decide.mjs";
 import { findProject, graphql } from "./lib/github.mjs";
+import { createItemWriter } from "./lib/items.mjs";
+import { parseClosingReferences } from "./lib/references.mjs";
 
 const schema = JSON.parse(
   readFileSync(new URL("./schema.json", import.meta.url), "utf8"),
@@ -38,73 +40,46 @@ if (!project) {
   console.error(`Project ${owner}/${number} was not found.`);
   process.exit(1);
 }
-const fieldsByName = new Map(project.fields.nodes.map((f) => [f.name, f]));
-const selectFields = schema.fields
-  .filter((f) => !f.dataType)
-  .map((f) => f.name);
+const { addToProject, currentValues, apply } = createItemWriter(
+  project,
+  schema,
+  dryRun,
+);
 
-function addToProject(contentId) {
+/**
+ * Issues a pull request closes: the links GitHub recorded, plus the issues the
+ * description names with a closing keyword. GitHub records no links for a pull
+ * request aimed at a non-default branch, such as a release branch.
+ */
+function closedIssues(pr, repository) {
   const data = graphql(
-    `mutation($project: ID!, $content: ID!) {
-       addProjectV2ItemById(input: { projectId: $project, contentId: $content }) {
-         item { id }
+    `query($id: ID!) {
+       node(id: $id) {
+         ... on PullRequest {
+           closingIssuesReferences(first: 20) { nodes { id number state } }
+         }
        }
      }`,
-    { project: project.id, content: contentId },
+    { id: pr.node_id },
   );
-  return data.addProjectV2ItemById.item.id;
-}
-
-function currentValues(itemId) {
-  const aliases = selectFields
-    .map(
-      (name, i) =>
-        `f${i}: fieldValueByName(name: ${JSON.stringify(name)}) {
-           ... on ProjectV2ItemFieldSingleSelectValue { name }
-         }`,
-    )
-    .join("\n");
-  const data = graphql(
-    `query($item: ID!) { node(id: $item) { ... on ProjectV2Item { ${aliases} } } }`,
-    { item: itemId },
-  );
-  const values = {};
-  selectFields.forEach((name, i) => {
-    values[name] = data.node?.[`f${i}`]?.name;
-  });
-  return values;
-}
-
-function apply(itemId, label, changes, values) {
-  for (const { field, option, onlyIfUnset } of changes) {
-    const definition = fieldsByName.get(field);
-    const optionId = definition?.options?.find((o) => o.name === option)?.id;
-    if (!optionId) {
-      console.warn(`${label}: no option "${option}" on field "${field}".`);
-      continue;
-    }
-    if (values[field] === option || (onlyIfUnset && values[field])) {
-      continue;
-    }
-    console.log(`${label}: ${field} ${values[field] ?? "(unset)"} -> ${option}`);
-    if (dryRun) {
-      continue;
-    }
-    graphql(
-      `mutation($project: ID!, $item: ID!, $field: ID!, $option: String!) {
-         updateProjectV2ItemFieldValue(input: {
-           projectId: $project, itemId: $item, fieldId: $field,
-           value: { singleSelectOptionId: $option }
-         }) { projectV2Item { id } }
+  const linked = data.node?.closingIssuesReferences?.nodes ?? [];
+  const seen = new Set(linked.map((issue) => issue.id));
+  const result = [...linked];
+  for (const issueNumber of parseClosingReferences(pr.body)) {
+    const found = graphql(
+      `query($owner: String!, $name: String!, $number: Int!) {
+         repository(owner: $owner, name: $name) {
+           issue(number: $number) { id number state }
+         }
        }`,
-      {
-        project: project.id,
-        item: itemId,
-        field: definition.id,
-        option: optionId,
-      },
-    );
+      { owner: repository.owner.login, name: repository.name, number: issueNumber },
+    ).repository?.issue;
+    if (found && !seen.has(found.id)) {
+      seen.add(found.id);
+      result.push(found);
+    }
   }
+  return result;
 }
 
 const names = (labels) => (labels ?? []).map((l) => l.name);
@@ -126,25 +101,16 @@ if (eventName === "issues") {
   );
 } else if (eventName === "pull_request_target" || eventName === "pull_request") {
   const pr = payload.pull_request;
-  const data = graphql(
-    `query($id: ID!) {
-       node(id: $id) {
-         ... on PullRequest {
-           closingIssuesReferences(first: 20) { nodes { id number state } }
-         }
-       }
-     }`,
-    { id: pr.node_id },
-  );
   const event = {
     action: payload.action,
     pullRequest: {
       draft: pr.draft,
       merged: pr.merged,
+      open: pr.state === "open",
       labels: names(pr.labels),
     },
   };
-  for (const linked of data.node?.closingIssuesReferences?.nodes ?? []) {
+  for (const linked of closedIssues(pr, payload.repository)) {
     const itemId = addToProject(linked.id);
     const values = currentValues(itemId);
     apply(

@@ -3,67 +3,192 @@
   "owner": "cdxgen",
   "public": true,
   "shortDescription": "Roadmap and work tracking for the cdxgen organization. See https://github.com/cdxgen/.github/tree/main/project",
-  "repositories": ["cdxgen/cdxgen"],
+  "repositories": [
+    "cdxgen/cdxgen"
+  ],
   "fields": [
     {
       "name": "Status",
       "builtin": true,
       "options": [
-        { "name": "Triage", "color": "GRAY", "description": "New, not yet looked at by a maintainer" },
-        { "name": "Backlog", "color": "PURPLE", "description": "Accepted, not scheduled" },
-        { "name": "Ready", "color": "BLUE", "description": "Scoped well enough for a person or an agent to start" },
-        { "name": "In progress", "color": "YELLOW", "description": "Someone is working on it, or a draft pull request is open" },
-        { "name": "In review", "color": "ORANGE", "description": "A pull request is open and ready for review" },
-        { "name": "Blocked", "color": "RED", "description": "Waiting on something outside the work itself" },
-        { "name": "Done", "color": "GREEN", "description": "Merged, or closed" }
+        {
+          "name": "Triage",
+          "color": "GRAY",
+          "description": "New, not yet looked at by a maintainer"
+        },
+        {
+          "name": "Backlog",
+          "color": "PURPLE",
+          "description": "Accepted, not scheduled"
+        },
+        {
+          "name": "Ready",
+          "color": "BLUE",
+          "description": "Scoped well enough for a person or an agent to start"
+        },
+        {
+          "name": "In progress",
+          "color": "YELLOW",
+          "description": "Someone is working on it, or a draft pull request is open"
+        },
+        {
+          "name": "In review",
+          "color": "ORANGE",
+          "description": "A pull request is open and ready for review"
+        },
+        {
+          "name": "Blocked",
+          "color": "RED",
+          "description": "Waiting on something outside the work itself"
+        },
+        {
+          "name": "Done",
+          "color": "GREEN",
+          "description": "Merged, or closed"
+        }
       ]
     },
     {
       "name": "Horizon",
       "options": [
-        { "name": "Now", "color": "GREEN", "description": "Being worked on this release cycle" },
-        { "name": "Next", "color": "BLUE", "description": "Planned for the following cycle" },
-        { "name": "Later", "color": "GRAY", "description": "Wanted, with no schedule" }
+        {
+          "name": "Now",
+          "color": "GREEN",
+          "description": "Being worked on this release cycle"
+        },
+        {
+          "name": "Next",
+          "color": "BLUE",
+          "description": "Planned for the following cycle"
+        },
+        {
+          "name": "Later",
+          "color": "GRAY",
+          "description": "Wanted, with no schedule"
+        }
       ]
     },
     {
       "name": "Priority",
       "options": [
-        { "name": "P0", "color": "RED", "description": "Broken output or a security problem for many users" },
-        { "name": "P1", "color": "ORANGE", "description": "Important for the next release" },
-        { "name": "P2", "color": "GRAY", "description": "Worth doing when time allows" }
+        {
+          "name": "P0",
+          "color": "RED",
+          "description": "Broken output or a security problem for many users"
+        },
+        {
+          "name": "P1",
+          "color": "ORANGE",
+          "description": "Important for the next release"
+        },
+        {
+          "name": "P2",
+          "color": "GRAY",
+          "description": "Worth doing when time allows"
+        }
       ]
     },
     {
       "name": "Autonomy",
       "options": [
-        { "name": "Human", "color": "GRAY", "description": "A person did the task without AI" },
-        { "name": "Assist", "color": "BLUE", "description": "A person did the task and AI did part of it" },
-        { "name": "Pair", "color": "PURPLE", "description": "A person and AI did the task together" },
-        { "name": "Copilot", "color": "ORANGE", "description": "AI did the task and asked a person for decisions" },
-        { "name": "Auto", "color": "GREEN", "description": "A person set the task and AI agents carried it through" }
+        {
+          "name": "Human",
+          "color": "GRAY",
+          "description": "A person did the task without AI"
+        },
+        {
+          "name": "Assist",
+          "color": "BLUE",
+          "description": "A person did the task and AI did part of it"
+        },
+        {
+          "name": "Pair",
+          "color": "PURPLE",
+          "description": "A person and AI did the task together"
+        },
+        {
+          "name": "Copilot",
+          "color": "ORANGE",
+          "description": "AI did the task and asked a person for decisions"
+        },
+        {
+          "name": "Auto",
+          "color": "GREEN",
+          "description": "A person set the task and AI agents carried it through"
+        }
       ]
     },
     {
       "name": "Area",
       "options": [
-        { "name": "JavaScript", "color": "YELLOW" },
-        { "name": "Python", "color": "BLUE" },
-        { "name": "Java", "color": "ORANGE" },
-        { "name": "Go", "color": "BLUE" },
-        { "name": "Rust", "color": "ORANGE" },
-        { "name": ".NET", "color": "PURPLE" },
-        { "name": "Ruby", "color": "RED" },
-        { "name": "Swift", "color": "ORANGE" },
-        { "name": "C and C++", "color": "GRAY" },
-        { "name": "Containers", "color": "BLUE" },
-        { "name": "Evinse", "color": "PURPLE" },
-        { "name": "CBOM", "color": "GREEN" },
-        { "name": "AI-BOM", "color": "PINK" },
-        { "name": "Integrations", "color": "GREEN" },
-        { "name": "Build and CI", "color": "GRAY" },
-        { "name": "Documentation", "color": "GRAY" },
-        { "name": "Security", "color": "RED" }
+        {
+          "name": "JavaScript",
+          "color": "YELLOW"
+        },
+        {
+          "name": "Python",
+          "color": "BLUE"
+        },
+        {
+          "name": "Java",
+          "color": "ORANGE"
+        },
+        {
+          "name": "Go",
+          "color": "BLUE"
+        },
+        {
+          "name": "Rust",
+          "color": "ORANGE"
+        },
+        {
+          "name": ".NET",
+          "color": "PURPLE"
+        },
+        {
+          "name": "Ruby",
+          "color": "RED"
+        },
+        {
+          "name": "Swift",
+          "color": "ORANGE"
+        },
+        {
+          "name": "C and C++",
+          "color": "GRAY"
+        },
+        {
+          "name": "Containers",
+          "color": "BLUE"
+        },
+        {
+          "name": "Evinse",
+          "color": "PURPLE"
+        },
+        {
+          "name": "CBOM",
+          "color": "GREEN"
+        },
+        {
+          "name": "AI-BOM",
+          "color": "PINK"
+        },
+        {
+          "name": "Integrations",
+          "color": "GREEN"
+        },
+        {
+          "name": "Build and CI",
+          "color": "GRAY"
+        },
+        {
+          "name": "Documentation",
+          "color": "GRAY"
+        },
+        {
+          "name": "Security",
+          "color": "RED"
+        }
       ]
     },
     {
@@ -106,16 +231,103 @@
     }
   ],
   "labels": [
-    { "name": "blocked", "color": "B60205", "description": "Waiting on something outside the work itself" },
-    { "name": "needs-decision", "color": "FBCA04", "description": "A maintainer has to choose before work can continue" }
+    {
+      "name": "blocked",
+      "color": "B60205",
+      "description": "Waiting on something outside the work itself"
+    },
+    {
+      "name": "needs-decision",
+      "color": "FBCA04",
+      "description": "A maintainer has to choose before work can continue"
+    }
   ],
   "views": [
-    { "name": "Status", "layout": "BOARD_LAYOUT", "filter": "-status:Done", "note": "Columns by Status." },
-    { "name": "Horizon", "layout": "BOARD_LAYOUT", "filter": "-status:Done", "note": "Set the column field to Horizon." },
-    { "name": "Triage", "layout": "TABLE_LAYOUT", "filter": "status:Triage", "note": "" },
-    { "name": "Releases", "layout": "TABLE_LAYOUT", "filter": "-status:Done", "note": "Group by Milestone." },
-    { "name": "Agent queue", "layout": "TABLE_LAYOUT", "filter": "status:Ready autonomy:Auto", "note": "" },
-    { "name": "Needs a person", "layout": "TABLE_LAYOUT", "filter": "-status:Done label:blocked,needs-decision", "note": "" },
-    { "name": "Epics", "layout": "TABLE_LAYOUT", "filter": "type:Epic", "note": "Group by Status." }
+    {
+      "name": "Status",
+      "layout": "BOARD_LAYOUT",
+      "filter": "-status:Done",
+      "note": "Columns by Status."
+    },
+    {
+      "name": "Horizon",
+      "layout": "BOARD_LAYOUT",
+      "filter": "-status:Done",
+      "note": "Set the column field to Horizon."
+    },
+    {
+      "name": "Triage",
+      "layout": "TABLE_LAYOUT",
+      "filter": "status:Triage",
+      "note": "",
+      "columns": [
+        "Title",
+        "Labels",
+        "Autonomy",
+        "Area",
+        "Repository"
+      ]
+    },
+    {
+      "name": "Releases",
+      "layout": "TABLE_LAYOUT",
+      "filter": "-status:Done",
+      "note": "Group by Milestone.",
+      "columns": [
+        "Title",
+        "Status",
+        "Priority",
+        "Autonomy",
+        "Area",
+        "Milestone",
+        "Linked pull requests"
+      ]
+    },
+    {
+      "name": "Agent queue",
+      "layout": "TABLE_LAYOUT",
+      "filter": "status:Ready autonomy:Auto",
+      "note": "",
+      "columns": [
+        "Title",
+        "Priority",
+        "Area",
+        "Plan",
+        "Linked pull requests"
+      ]
+    },
+    {
+      "name": "Needs a person",
+      "layout": "TABLE_LAYOUT",
+      "filter": "-status:Done label:blocked,needs-decision",
+      "note": "",
+      "columns": [
+        "Title",
+        "Status",
+        "Labels",
+        "Assignees",
+        "Priority"
+      ]
+    },
+    {
+      "name": "Epics",
+      "layout": "TABLE_LAYOUT",
+      "filter": "type:Epic",
+      "note": "Group by Status.",
+      "columns": [
+        "Title",
+        "Status",
+        "Horizon",
+        "Plan",
+        "Sub-issues progress"
+      ]
+    }
+  ],
+  "issueTypes": [
+    {
+      "name": "Epic",
+      "description": "A planned body of work with a plan document and several deliverables",
+      "color": "purple"
+    }
   ]
 }

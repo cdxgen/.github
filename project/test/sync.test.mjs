@@ -12,7 +12,7 @@ const syncScript = new URL("../sync.mjs", import.meta.url).pathname;
 
 // A stand-in for the gh CLI. It answers the GraphQL documents sync.mjs sends
 // from canned data and appends every write to a log file.
-function makeStub(directory, { currentStatus, linkedState = "OPEN" }) {
+function makeStub(directory, { currentStatus, linkedState = "OPEN", linkedNodes = true }) {
   const project = {
     id: "project-1",
     fields: {
@@ -40,7 +40,9 @@ if (q.includes("projectV2(number")) {
   const status = ${JSON.stringify(currentStatus ?? null)};
   data = { node: { f0: status ? { name: status } : null } };
 } else if (q.includes("closingIssuesReferences")) {
-  data = { node: { closingIssuesReferences: { nodes: [{ id: "issue-node", number: 7, state: ${JSON.stringify(linkedState)} }] } } };
+  data = { node: { closingIssuesReferences: { nodes: ${linkedNodes} ? [{ id: "issue-node", number: 7, state: ${JSON.stringify(linkedState)} }] : [] } } };
+} else if (q.includes("issue(number")) {
+  data = { repository: { issue: { id: "issue-" + request.variables.number, number: request.variables.number, state: "OPEN" } } };
 } else if (q.includes("updateProjectV2ItemFieldValue")) {
   log(request.variables);
   data = { updateProjectV2ItemFieldValue: { projectV2Item: { id: request.variables.item } } };
@@ -148,6 +150,41 @@ describe("sync.mjs", { skip: process.platform === "win32" }, () => {
         pull_request: { node_id: "pr-node", number: 9, draft: false, merged: false, labels: [] },
       },
       { currentStatus: "In review" },
+    );
+    assert.equal(writes.length, 0);
+  });
+
+  it("finds the issue from the body of a pull request to a release branch", () => {
+    const writes = run(
+      "pull_request_target",
+      {
+        action: "closed",
+        repository: { name: "cdxgen", owner: { login: "cdxgen" } },
+        pull_request: {
+          node_id: "pr-node",
+          number: 9,
+          draft: false,
+          merged: true,
+          labels: [],
+          body: "Backport.\n\nFixes #42",
+        },
+      },
+      { currentStatus: "In review", linkedNodes: false },
+    );
+    assert.deepEqual(
+      writes.map((w) => [w.item, w.option]),
+      [["item-issue-42", "option-Done"]],
+    );
+  });
+
+  it("keeps a Blocked issue Blocked when a pull request is opened", () => {
+    const writes = run(
+      "pull_request_target",
+      {
+        action: "opened",
+        pull_request: { node_id: "pr-node", number: 9, draft: false, merged: false, labels: [] },
+      },
+      { currentStatus: "Blocked" },
     );
     assert.equal(writes.length, 0);
   });

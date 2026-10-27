@@ -153,6 +153,9 @@ function ensureFields(project) {
 }
 
 function ensureViews(project) {
+  const fieldIds = new Map(
+    findProject(owner, { title: schema.title }).fields.nodes.map((f) => [f.name, f.id]),
+  );
   const data = graphql(
     `query($id: ID!) {
        node(id: $id) { ... on ProjectV2 { views(first: 50) { nodes { id name layout filter } } } }
@@ -187,12 +190,33 @@ function ensureViews(project) {
        }`,
       { view: viewId, filter: wanted.filter },
     );
+    if (wanted.columns) {
+      const ids = [];
+      for (const column of wanted.columns) {
+        if (fieldIds.has(column)) {
+          ids.push(fieldIds.get(column));
+        } else {
+          console.warn(`view ${wanted.name}: no field named "${column}", skipping it.`);
+        }
+      }
+      graphql(
+        `mutation($view: ID!, $ids: [ID!]) {
+           updateProjectV2View(input: { viewId: $view, configuration: { visibleFieldIds: $ids } }) {
+             projectV2View { id }
+           }
+         }`,
+        { view: viewId, ids },
+      );
+    }
   }
 }
 
 function ensureRepositories(project) {
   for (const slug of schema.repositories) {
     const [repoOwner, repoName] = slug.split("/");
+    if (project.repositories?.nodes?.some((r) => r.nameWithOwner === slug)) {
+      continue;
+    }
     const data = graphql(
       `query($owner: String!, $name: String!) {
          repository(owner: $owner, name: $name) { id }
@@ -208,6 +232,31 @@ function ensureRepositories(project) {
            }
          }`,
         { project: project.id, repo: data.repository.id },
+      );
+    }
+  }
+}
+
+function ensureIssueTypes() {
+  const have = JSON.parse(
+    execFileSync("gh", ["api", `orgs/${owner}/issue-types`], { encoding: "utf8" }),
+  ).map((t) => t.name);
+  for (const type of schema.issueTypes) {
+    if (have.includes(type.name)) {
+      continue;
+    }
+    say(`create issue type ${type.name}`);
+    if (apply) {
+      execFileSync(
+        "gh",
+        [
+          "api", `orgs/${owner}/issue-types`, "--method", "POST",
+          "-f", `name=${type.name}`,
+          "-f", `description=${type.description}`,
+          "-f", `color=${type.color}`,
+          "-F", "is_enabled=true",
+        ],
+        { stdio: "inherit" },
       );
     }
   }
@@ -243,6 +292,7 @@ if (project) {
 } else {
   say("fields, views and repository links follow once the project exists");
 }
+ensureIssueTypes();
 ensureLabels();
 if (!apply) {
   console.log("\nNothing was written. Run again with --apply to make these changes.");
