@@ -23,4 +23,4 @@ jobs:
         with:
           persist-credentials: false
       - name: Run the tests
-        run: node --test project/test/
+        run: node --test "project/test/*.test.mjs"

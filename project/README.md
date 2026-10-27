@@ -53,7 +53,7 @@ To try the sync without writing, set `DRY_RUN=1` and run `node project/sync.mjs`
 ## Tests
 
 ```
-node --test project/test/
+node --test "project/test/*.test.mjs"
 ```
 
 The tests need only Node.js. The sync tests replace the `gh` command with a small stub, so they never contact GitHub.
