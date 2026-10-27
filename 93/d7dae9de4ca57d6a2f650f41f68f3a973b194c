@@ -1,0 +1,45 @@
+project/README.md
+  s_7259a555d05c3e::t_4a8d94b7b44ae6 13,15,26,28-43,47,49
+project/backfill.mjs
+  s_7259a555d05c3e::t_e8f4b22c662f06 1-76
+project/lib/decide.mjs
+  s_7259a555d05c3e::t_4480a2d6bee113 103-106,122-138,143-157
+project/lib/github.mjs
+  s_7259a555d05c3e::t_3adebe44111612 30
+project/lib/items.mjs
+  s_7259a555d05c3e::t_94c87a8acc48f8 1-92
+project/lib/references.mjs
+  s_7259a555d05c3e::t_26cf4112482a91 1-72
+project/schema.json
+  s_7259a555d05c3e::t_450e9ca63cb0c0 6-8,14-48,54-68,74-88,94-118,124-191,234-243,246-331
+project/setup.mjs
+  s_7259a555d05c3e::t_10d735ebad7fdc 156-158,193-210,217-219,240-264,295
+project/sync.mjs
+  s_7259a555d05c3e::t_bf86059f3daab2 20-21,43-47,49-54,56-60,63,65-73,75-80,82,109,113
+project/test/backfill.test.mjs
+  s_7259a555d05c3e::t_c024255af668c1 1-69
+project/test/decide.test.mjs
+  s_7259a555d05c3e::t_b7d97dd33dfd7e 6,133-169,171,183-191,205-214
+project/test/references.test.mjs
+  s_7259a555d05c3e::t_4c77f97ba08b42 1-27
+project/test/sync.test.mjs
+  s_7259a555d05c3e::t_ebf337e2cc40e7 15,43-45,156-190
+workflow-templates/project-sync.yml
+  s_7259a555d05c3e::t_2d81cd852615ed 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "93d7dae9de4ca57d6a2f650f41f68f3a973b194c",
+  "prompts": {},
+  "sessions": {
+    "s_7259a555d05c3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "369df51b-6592-47e6-a54c-85110ab6d9b9",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
