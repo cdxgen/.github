@@ -1,0 +1,26 @@
+name: Project scripts
+
+on:
+  pull_request:
+    paths:
+      - project/**
+      - .github/workflows/project-*.yml
+  push:
+    branches:
+      - main
+    paths:
+      - project/**
+
+permissions: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Run the tests
+        run: node --test project/test/

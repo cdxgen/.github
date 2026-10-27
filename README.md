@@ -7,3 +7,5 @@ Default community health files for the [cdxgen](https://github.com/cdxgen) organ
 - [SECURITY.md](SECURITY.md): how to report a vulnerability
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md): the code of conduct for all cdxgen spaces
 - [profile/README.md](profile/README.md): the introduction shown on the organization's GitHub page
+- [project/](project/README.md): the organization project board, its schema, setup script and sync workflow
+- [plans/](plans/README.md): how plans, epics and test corpora are stored and linked to the board

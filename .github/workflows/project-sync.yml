@@ -1,0 +1,53 @@
+name: Project sync
+
+# Reusable workflow. A repository calls it from an issues and
+# pull_request_target workflow, see workflow-templates/project-sync.yml.
+#
+# The job never checks out the caller's code. It fetches this repository's
+# project/ folder and runs sync.mjs, which only reads the event payload and
+# talks to the GitHub GraphQL API. That is what makes pull_request_target safe
+# here, see
+# https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/
+on:
+  workflow_call:
+    inputs:
+      project-number:
+        description: Number of the organization project to update
+        type: string
+        required: true
+      ref:
+        description: Ref of cdxgen/.github that holds the scripts. Pin a commit to freeze behavior.
+        type: string
+        default: main
+    secrets:
+      PROJECT_TOKEN:
+        description: Token with write access to organization projects
+        required: false
+
+permissions: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Fetch the sync scripts
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: cdxgen/.github
+          ref: ${{ inputs.ref }}
+          sparse-checkout: project
+          persist-credentials: false
+
+      - name: Update the project
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          PROJECT_OWNER: ${{ github.repository_owner }}
+          PROJECT_NUMBER: ${{ inputs.project-number }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "PROJECT_TOKEN is not available to this repository. Skipping."
+            exit 0
+          fi
+          node project/sync.mjs
