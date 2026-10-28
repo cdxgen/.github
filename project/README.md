@@ -44,6 +44,8 @@ node project/backfill.mjs --apply
 
 It adds every open issue of the linked repositories in Triage and copies Area from labels. It never replaces a value someone has set, so it can be run again, and it adds one issue at a time, so a large repository takes several minutes.
 
+With `--pull-requests` it also adds the open and merged pull requests that have a milestone, as items of their own. A merged one becomes Done, a draft In progress and a ready one In review, and a Blocked or Done the board already has is kept. That is how a release or a codename that spans repositories, such as the AppThreat Pelorus work, shows its pull requests next to its issues. Run it on a schedule if the board should keep up on its own, since the Free plan allows only one auto-add repository.
+
 ## Epics
 
 Epics use an Epic issue type, which `setup.mjs` creates. The [Epic form](../ISSUE_TEMPLATE/epic.yml) is an organization default, but a repository that has its own `ISSUE_TEMPLATE` folder, as `cdxgen/cdxgen` does, ignores the organization's defaults. Copy `epic.yml` into that repository's `.github/ISSUE_TEMPLATE` folder, as described in [Creating a default community health file](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file).
