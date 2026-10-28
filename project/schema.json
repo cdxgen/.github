@@ -256,8 +256,8 @@
     {
       "name": "Agent queue",
       "layout": "TABLE_LAYOUT",
-      "filter": "-label:\"needs triaging\" -status:Triage,Blocked,Done",
-      "note": "Everything triaged and not waiting on a person. Group by Status and sort by Priority.",
+      "filter": "status:\"In progress\",\"In review\" -label:\"needs triaging\"",
+      "note": "Work that is being done or waiting for review. Group by Status and sort by Priority.",
       "columns": [
         "Title",
         "Status",
