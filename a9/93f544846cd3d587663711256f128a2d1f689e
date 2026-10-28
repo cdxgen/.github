@@ -1,0 +1,27 @@
+plans/cdxgen-cyclonedx-2.md
+  s_99b17920a63eb7::t_d94e29c9ef2032 1-54
+plans/cdxgen-jvm-toolchain-2026.md
+  s_99b17920a63eb7::t_1ae7b32faf0330 1-50
+plans/cdxgen-pnpm-12-lockfile.md
+  s_99b17920a63eb7::t_5557d172ac6c7a 1-52
+plans/cdxgen-release-supply-chain.md
+  s_99b17920a63eb7::t_87807a59b8c678 1-52
+plans/cdxgen-sbom-minimum-elements-2026.md
+  s_99b17920a63eb7::t_4fdd0ccb96aa9a 1-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a993f544846cd3d587663711256f128a2d1f689e",
+  "prompts": {},
+  "sessions": {
+    "s_99b17920a63eb7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c22307c9-9f32-42a4-8936-a5ea4b86e3cb",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
