@@ -89,36 +89,6 @@
       ]
     },
     {
-      "name": "Autonomy",
-      "options": [
-        {
-          "name": "Human",
-          "color": "GRAY",
-          "description": "A person did the task without AI"
-        },
-        {
-          "name": "Assist",
-          "color": "BLUE",
-          "description": "A person did the task and AI did part of it"
-        },
-        {
-          "name": "Pair",
-          "color": "PURPLE",
-          "description": "A person and AI did the task together"
-        },
-        {
-          "name": "Copilot",
-          "color": "ORANGE",
-          "description": "AI did the task and asked a person for decisions"
-        },
-        {
-          "name": "Auto",
-          "color": "GREEN",
-          "description": "A person set the task and AI agents carried it through"
-        }
-      ]
-    },
-    {
       "name": "Area",
       "options": [
         {
@@ -198,15 +168,6 @@
   ],
   "labelFields": [
     {
-      "field": "Autonomy",
-      "map": {
-        "ai-auto": "Auto",
-        "ai-copilot": "Copilot",
-        "ai-pair": "Pair",
-        "ai-assist": "Assist"
-      }
-    },
-    {
       "field": "Area",
       "map": {
         "lang:node": "JavaScript",
@@ -256,6 +217,12 @@
       "note": "Set the column field to Horizon."
     },
     {
+      "name": "13.6.0",
+      "layout": "BOARD_LAYOUT",
+      "filter": "milestone:\"13.6.0\"",
+      "note": "Columns by Status. Change the filter to the next release's milestone when it ships."
+    },
+    {
       "name": "Triage",
       "layout": "TABLE_LAYOUT",
       "filter": "status:Triage",
@@ -263,7 +230,6 @@
       "columns": [
         "Title",
         "Labels",
-        "Autonomy",
         "Area",
         "Repository"
       ]
@@ -277,7 +243,6 @@
         "Title",
         "Status",
         "Priority",
-        "Autonomy",
         "Area",
         "Milestone",
         "Linked pull requests"
@@ -286,7 +251,7 @@
     {
       "name": "Agent queue",
       "layout": "TABLE_LAYOUT",
-      "filter": "status:Ready autonomy:Auto",
+      "filter": "status:Ready label:ai-auto",
       "note": "",
       "columns": [
         "Title",

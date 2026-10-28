@@ -19,15 +19,39 @@ export function createItemWriter(project, schema, dryRun) {
     if (dryRun) {
       return `dry-run-item-${contentId}`;
     }
-    const data = graphql(
-      `mutation($project: ID!, $content: ID!) {
-         addProjectV2ItemById(input: { projectId: $project, contentId: $content }) {
-           item { id }
-         }
-       }`,
-      { project: project.id, content: contentId },
-    );
-    return data.addProjectV2ItemById.item.id;
+    try {
+      const data = graphql(
+        `mutation($project: ID!, $content: ID!) {
+           addProjectV2ItemById(input: { projectId: $project, contentId: $content }) {
+             item { id }
+           }
+         }`,
+        { project: project.id, content: contentId },
+      );
+      return data.addProjectV2ItemById.item.id;
+    } catch (error) {
+      // The item may already be on the board, for example because a built-in
+      // auto-add workflow added it a moment earlier. Look up its id instead.
+      if (!String(error.message).includes("already exists")) {
+        throw error;
+      }
+      const found = graphql(
+        `query($id: ID!) {
+           node(id: $id) {
+             ... on Issue { projectItems(first: 50) { nodes { id project { id } } } }
+             ... on PullRequest { projectItems(first: 50) { nodes { id project { id } } } }
+           }
+         }`,
+        { id: contentId },
+      );
+      const item = found.node?.projectItems?.nodes?.find(
+        (n) => n.project.id === project.id,
+      );
+      if (!item) {
+        throw error;
+      }
+      return item.id;
+    }
   }
 
   function currentValues(itemId) {

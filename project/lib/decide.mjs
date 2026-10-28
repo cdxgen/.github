@@ -25,8 +25,8 @@ export function pickLabelOption(labels, mapping) {
 }
 
 /**
- * Field changes that come from labels alone, for example Autonomy from the
- * ai-* labels.
+ * Field changes that come from labels alone, for example Area from the
+ * lang:* labels.
  *
  * @param {string[]} labels Label names
  * @param {Object[]} labelFields The labelFields member of the schema
@@ -45,57 +45,26 @@ export function labelChanges(labels, labelFields, onlyIfUnset) {
 }
 
 /**
- * Changes for an event on an issue.
+ * Changes for a label event on an issue. The project's built-in workflows
+ * already set Triage when an item is added and Done when an issue is closed,
+ * so the only issue rules left are the ones they cannot express: the blocked
+ * label sets Blocked, and labels fill the Area field.
  *
- * @param {Object} event { action, label, issue: { labels, state } }
+ * @param {Object} event { action, label, issue: { labels } }
  * @param {Object} current Current Status of the item, { status }
  * @param {Object[]} labelFields The labelFields member of the schema
  * @returns {Object[]} Changes
  */
 export function decideForIssue(event, current, labelFields) {
-  const labels = event.issue.labels;
   const changes = [];
-  switch (event.action) {
-    case "closed":
-      changes.push({ field: "Status", option: "Done", onlyIfUnset: false });
-      break;
-    case "reopened":
-      if (current.status === "Done") {
-        changes.push({
-          field: "Status",
-          option: "Backlog",
-          onlyIfUnset: false,
-        });
-      }
-      break;
-    case "labeled":
-      if (event.label === "blocked") {
-        changes.push({
-          field: "Status",
-          option: "Blocked",
-          onlyIfUnset: false,
-        });
-      }
-      break;
-    case "unlabeled":
-      if (event.label === "blocked" && current.status === "Blocked") {
-        changes.push({
-          field: "Status",
-          option: "Backlog",
-          onlyIfUnset: false,
-        });
-      }
-      break;
-    default:
-      break;
+  if (event.label === "blocked") {
+    if (event.action === "labeled") {
+      changes.push({ field: "Status", option: "Blocked", onlyIfUnset: false });
+    } else if (event.action === "unlabeled" && current.status === "Blocked") {
+      changes.push({ field: "Status", option: "Backlog", onlyIfUnset: false });
+    }
   }
-  if (!changes.some((c) => c.field === "Status")) {
-    // Any event on an issue that has no status yet places it in Triage. This
-    // also backfills issues that were opened before the board existed.
-    changes.push({ field: "Status", option: "Triage", onlyIfUnset: true });
-  }
-  const fromLabels = ["opened", "labeled", "unlabeled"].includes(event.action);
-  return changes.concat(labelChanges(labels, labelFields, !fromLabels));
+  return changes.concat(labelChanges(event.issue.labels, labelFields, false));
 }
 
 /**
