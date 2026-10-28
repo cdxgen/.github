@@ -217,6 +217,12 @@
       "note": "Set the column field to Horizon."
     },
     {
+      "name": "13.6.0",
+      "layout": "BOARD_LAYOUT",
+      "filter": "milestone:\"13.6.0\"",
+      "note": "Columns by Status. Change the filter to the next release's milestone when it ships."
+    },
+    {
       "name": "Triage",
       "layout": "TABLE_LAYOUT",
       "filter": "status:Triage",
