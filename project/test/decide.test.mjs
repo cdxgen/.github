@@ -4,6 +4,8 @@ import { describe, it } from "node:test";
 
 import {
   decideForBackfill,
+  decideForMilestoneClosedIssue,
+  decideForMilestonePullRequest,
   decideForIssue,
   decideForPullRequest,
   pickLabelOption,
@@ -190,5 +192,69 @@ describe("decideForBackfill", () => {
       { field: "Status", option: "Triage", onlyIfUnset: true },
       { field: "Area", option: "Rust", onlyIfUnset: true },
     ]);
+  });
+});
+
+describe("decideForMilestonePullRequest", () => {
+  const pr = (extra) => ({ draft: false, merged: false, labels: [], ...extra });
+
+  it("marks a merged pull request Done unless it already is or is Blocked", () => {
+    for (const status of [undefined, "Triage", "In review"]) {
+      assert.equal(
+        decideForMilestonePullRequest(pr({ merged: true }), status, labelFields)[0].option,
+        "Done",
+        String(status),
+      );
+    }
+    for (const status of ["Done", "Blocked"]) {
+      const changes = decideForMilestonePullRequest(pr({ merged: true }), status, labelFields);
+      assert.equal(changes.some((c) => c.field === "Status"), false, status);
+    }
+  });
+
+  it("moves an open pull request to In progress or In review from an early status", () => {
+    assert.equal(
+      decideForMilestonePullRequest(pr({ draft: true }), "Triage", labelFields)[0].option,
+      "In progress",
+    );
+    assert.equal(
+      decideForMilestonePullRequest(pr(), undefined, labelFields)[0].option,
+      "In review",
+    );
+    assert.equal(
+      decideForMilestonePullRequest(pr(), "In progress", labelFields)[0].option,
+      "In review",
+    );
+  });
+
+  it("keeps a status a person chose for an open pull request", () => {
+    for (const status of ["Blocked", "Done", "In review"]) {
+      const changes = decideForMilestonePullRequest(pr(), status, labelFields);
+      assert.equal(changes.some((c) => c.field === "Status"), false, status);
+    }
+  });
+
+  it("fills Area from the pull request labels only when empty", () => {
+    const changes = decideForMilestonePullRequest(
+      pr({ merged: true, labels: ["lang:go"] }),
+      "Done",
+      labelFields,
+    );
+    assert.deepEqual(changes, [{ field: "Area", option: "Go", onlyIfUnset: true }]);
+  });
+});
+
+describe("decideForMilestoneClosedIssue", () => {
+  it("marks a closed issue Done unless it is Done or Blocked", () => {
+    for (const status of [undefined, "Triage", "Backlog", "In progress"]) {
+      assert.equal(
+        decideForMilestoneClosedIssue([], status, labelFields)[0].option,
+        "Done",
+        String(status),
+      );
+    }
+    for (const status of ["Done", "Blocked"]) {
+      assert.equal(decideForMilestoneClosedIssue([], status, labelFields).length, 0, status);
+    }
   });
 });

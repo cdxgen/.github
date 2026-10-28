@@ -124,3 +124,51 @@ export function decideForBackfill(labels, labelFields) {
     ...labelChanges(labels, labelFields, true),
   ];
 }
+
+const EARLY = [undefined, "Triage", "Backlog"];
+
+/**
+ * Changes for a pull request that carries a milestone and is kept on the board
+ * as an item of its own, so a release or a codename that spans repositories
+ * shows its pull requests next to its issues. A person's Blocked and a Done
+ * the board already has are left alone.
+ *
+ * @param {Object} pr { draft, merged, labels }
+ * @param {string|undefined} status Current Status of the item
+ * @param {Object[]} labelFields The labelFields member of the schema
+ * @returns {Object[]} Changes
+ */
+export function decideForMilestonePullRequest(pr, status, labelFields) {
+  const changes = [];
+  const set = (option) =>
+    changes.push({ field: "Status", option, onlyIfUnset: false });
+  if (pr.merged) {
+    if (status !== "Done" && status !== "Blocked") {
+      set("Done");
+    }
+  } else if (pr.draft) {
+    if (EARLY.includes(status)) {
+      set("In progress");
+    }
+  } else if ([...EARLY, "Ready", "In progress"].includes(status)) {
+    set("In review");
+  }
+  return changes.concat(labelChanges(pr.labels, labelFields, true));
+}
+
+/**
+ * Changes for a closed issue that carries a milestone. It is Done unless it
+ * already is or a person marked it Blocked.
+ *
+ * @param {string[]} labels Label names
+ * @param {string|undefined} status Current Status of the item
+ * @param {Object[]} labelFields The labelFields member of the schema
+ * @returns {Object[]} Changes
+ */
+export function decideForMilestoneClosedIssue(labels, status, labelFields) {
+  const changes = [];
+  if (status !== "Done" && status !== "Blocked") {
+    changes.push({ field: "Status", option: "Done", onlyIfUnset: false });
+  }
+  return changes.concat(labelChanges(labels, labelFields, true));
+}

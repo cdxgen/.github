@@ -32,6 +32,10 @@ const q = request.query;
 let data;
 if (q.includes("projectsV2")) {
   data = { organization: { projectsV2: { nodes: [${JSON.stringify(project)}] } } };
+} else if (q.includes("pullRequests(first")) {
+  data = { repository: { pullRequests: { pageInfo: { hasNextPage: false, endCursor: null },
+    nodes: [{ id: "pr1", number: 7, isDraft: false, merged: true, milestone: { title: "v4" }, labels: { nodes: [{ name: "lang:go" }] } },
+            { id: "pr2", number: 8, isDraft: false, merged: false, milestone: null, labels: { nodes: [] } }] } } };
 } else if (q.includes("issues(first")) {
   data = { repository: { issues: { pageInfo: { hasNextPage: false, endCursor: null },
     nodes: [{ id: "i1", number: 1, labels: { nodes: [{ name: "lang:go" }] } },
@@ -58,7 +62,7 @@ process.stdout.write(JSON.stringify({ data }));
     const env = { ...process.env, PATH: `${directory}${path.delimiter}${process.env.PATH}` };
 
     const dry = execFileSync(process.execPath, [script], { env, encoding: "utf8" });
-    assert.match(dry, /2 open issues processed/);
+    assert.match(dry, /2 items processed/);
     assert.throws(() => readFileSync(log, "utf8"), /ENOENT/);
 
     execFileSync(process.execPath, [script, "--apply"], { env, encoding: "utf8" });
@@ -68,6 +72,58 @@ process.stdout.write(JSON.stringify({ data }));
       "set item-i1 option-Triage",
       "set item-i1 option-Go",
       "set item-existing option-Triage",
+    ]);
+  });
+
+  it("adds only milestoned pull requests with --milestoned and marks merged ones Done", () => {
+    const directory = mkdtempSync(path.join(tmpdir(), "project-backfill-pr-"));
+    const project = {
+      id: "project-1",
+      title: schema.title,
+      fields: {
+        nodes: schema.fields.map((f) => ({
+          id: `field-${f.name}`,
+          name: f.name,
+          options: (f.options ?? []).map((o) => ({ id: `option-${o.name}`, name: o.name })),
+        })),
+      },
+    };
+    const log = path.join(directory, "calls.log");
+    const stub = `#!/usr/bin/env node
+const { appendFileSync, readFileSync } = require("node:fs");
+const request = JSON.parse(readFileSync(0, "utf8"));
+const q = request.query;
+let data;
+if (q.includes("projectsV2")) {
+  data = { organization: { projectsV2: { nodes: [${JSON.stringify(project)}] } } };
+} else if (q.includes("pullRequests(first")) {
+  data = { repository: { pullRequests: { pageInfo: { hasNextPage: false, endCursor: null },
+    nodes: [{ id: "pr1", number: 7, isDraft: false, merged: true, milestone: { title: "v4" }, labels: { nodes: [{ name: "lang:go" }] } },
+            { id: "pr2", number: 8, isDraft: false, merged: false, milestone: null, labels: { nodes: [] } }] } } };
+} else if (q.includes("issues(first")) {
+  data = { repository: { issues: { pageInfo: { hasNextPage: false, endCursor: null }, nodes: q.includes("CLOSED") ? [{ id: "ci1", number: 5, milestone: { title: "v4" }, labels: { nodes: [] } }, { id: "ci2", number: 6, milestone: null, labels: { nodes: [] } }] : [] } } };
+} else if (q.includes("addProjectV2ItemById")) {
+  appendFileSync(${JSON.stringify(log)}, "add " + request.variables.content + "\\n");
+  data = { addProjectV2ItemById: { item: { id: "item-" + request.variables.content } } };
+} else if (q.includes("fieldValueByName")) {
+  data = { node: { f0: { name: "Triage" } } };
+} else if (q.includes("updateProjectV2ItemFieldValue")) {
+  appendFileSync(${JSON.stringify(log)}, "set " + request.variables.item + " " + request.variables.option + "\\n");
+  data = { updateProjectV2ItemFieldValue: { projectV2Item: { id: "x" } } };
+} else { console.error("unexpected " + q); process.exit(1); }
+process.stdout.write(JSON.stringify({ data }));
+`;
+    const gh = path.join(directory, "gh");
+    writeFileSync(gh, stub);
+    chmodSync(gh, 0o755);
+    const env = { ...process.env, PATH: `${directory}${path.delimiter}${process.env.PATH}` };
+    execFileSync(process.execPath, [script, "--apply", "--milestoned"], { env, encoding: "utf8" });
+    assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), [
+      "add ci1",
+      "set item-ci1 option-Done",
+      "add pr1",
+      "set item-pr1 option-Done",
+      "set item-pr1 option-Go",
     ]);
   });
 });
