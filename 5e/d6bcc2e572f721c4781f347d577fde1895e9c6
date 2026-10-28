@@ -1,0 +1,27 @@
+project/README.md
+  s_7259a555d05c3e::t_b94dffa1454471 47
+project/backfill.mjs
+  s_7259a555d05c3e::t_9eb97bc4480664 9-12,21,31,79-114
+project/lib/decide.mjs
+  s_7259a555d05c3e::t_92029a37b3cd79 158-174
+project/test/backfill.test.mjs
+  s_7259a555d05c3e::t_88407f47bd452c 78,104,120,122-123
+project/test/decide.test.mjs
+  s_7259a555d05c3e::t_4cb00c145e83d5 7,246-260
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5ed6bcc2e572f721c4781f347d577fde1895e9c6",
+  "prompts": {},
+  "sessions": {
+    "s_7259a555d05c3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "369df51b-6592-47e6-a54c-85110ab6d9b9",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
