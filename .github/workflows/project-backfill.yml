@@ -1,0 +1,37 @@
+name: Project backfill
+
+# Keeps the cdxgen roadmap project complete on a schedule: every open issue,
+# and every pull request and closed issue that has a milestone, is added to
+# the board, so a release view such as 13.6.0 shows its finished work. The
+# script only fills empty fields, so running it again changes nothing that a
+# person set. See project/README.md.
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: project-backfill
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Add milestoned work to the board
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "PROJECT_TOKEN is not available to this repository. Skipping."
+            exit 0
+          fi
+          node project/backfill.mjs --milestoned --apply
