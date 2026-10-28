@@ -1,0 +1,19 @@
+project/schema.json
+  s_7259a555d05c3e::t_e706d3afaca433 219-224
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ebfbd126e021b10374d45fe9b1e81990fbf87775",
+  "prompts": {},
+  "sessions": {
+    "s_7259a555d05c3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "369df51b-6592-47e6-a54c-85110ab6d9b9",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
