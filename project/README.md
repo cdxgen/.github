@@ -4,7 +4,7 @@ The cdxgen organization tracks its work on one GitHub project, described in [sch
 
 ## Fields
 
-Status says where an item is: Triage, Backlog, Ready, In progress, In review, Blocked or Done. Horizon (Now, Next, Later) and Priority (P0 to P2) are chosen by a maintainer and never touched by automation. Area follows the `lang:*` and topic labels. Plan holds the permalink of the plan document for an epic. The release an item is aimed at is the built-in Milestone field, so it stays tied to the repository's milestones. How much AI took part is not a field: the `ai-*` labels from [CONTRIBUTING.md](../CONTRIBUTING.md) already say so, and the Agent queue view filters on `label:ai-auto`.
+Status says where an item is: Triage, Backlog, Ready, In progress, In review, Blocked or Done. Horizon (Now, Next, Later) and Priority (P0 to P2) are chosen by a maintainer and never touched by automation. Area follows the `lang:*` and topic labels. Plan holds the permalink of the plan document for an epic. The release an item is aimed at is the built-in Milestone field, so it stays tied to the repository's milestones. How much AI took part is not a field: the `ai-*` labels from [CONTRIBUTING.md](../CONTRIBUTING.md) already say so, and the Agent queue view lists issues labeled `needs agent` until they are done, while `ai-auto` stays a label on the pull request.
 
 ## Built-in workflows
 
