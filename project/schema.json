@@ -201,6 +201,11 @@
       "name": "needs-decision",
       "color": "FBCA04",
       "description": "A maintainer has to choose before work can continue"
+    },
+    {
+      "name": "needs agent",
+      "color": "5319E7",
+      "description": "Chosen for the agent workflow: a plan, an implementation and a review"
     }
   ],
   "views": [
@@ -251,13 +256,14 @@
     {
       "name": "Agent queue",
       "layout": "TABLE_LAYOUT",
-      "filter": "status:Ready label:ai-auto",
-      "note": "",
+      "filter": "label:\"needs agent\" -status:Done",
+      "note": "Group by Status and sort by Priority.",
       "columns": [
         "Title",
+        "Status",
         "Priority",
+        "Milestone",
         "Area",
-        "Plan",
         "Linked pull requests"
       ]
     },
