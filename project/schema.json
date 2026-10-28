@@ -203,9 +203,9 @@
       "description": "A maintainer has to choose before work can continue"
     },
     {
-      "name": "needs agent",
-      "color": "5319E7",
-      "description": "Chosen for the agent workflow: a plan, an implementation and a review"
+      "name": "needs triaging",
+      "color": "FDBC58",
+      "description": "A maintainer has not looked at this yet"
     }
   ],
   "views": [
@@ -256,8 +256,8 @@
     {
       "name": "Agent queue",
       "layout": "TABLE_LAYOUT",
-      "filter": "label:\"needs agent\" -status:Done",
-      "note": "Group by Status and sort by Priority.",
+      "filter": "-label:\"needs triaging\" -status:Triage,Blocked,Done",
+      "note": "Everything triaged and not waiting on a person. Group by Status and sort by Priority.",
       "columns": [
         "Title",
         "Status",
