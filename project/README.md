@@ -44,7 +44,7 @@ node project/backfill.mjs --apply
 
 It adds every open issue of the linked repositories in Triage and copies Area from labels. It never replaces a value someone has set, so it can be run again, and it adds one issue at a time, so a large repository takes several minutes.
 
-With `--pull-requests` it also adds the open and merged pull requests that have a milestone, as items of their own. A merged one becomes Done, a draft In progress and a ready one In review, and a Blocked or Done the board already has is kept. That is how a release or a codename that spans repositories, such as the AppThreat Pelorus work, shows its pull requests next to its issues. Run it on a schedule if the board should keep up on its own, since the Free plan allows only one auto-add repository.
+With `--milestoned` it also adds the open and merged pull requests, and the closed issues, that have a milestone, as items of their own. A merged pull request or a closed issue becomes Done, a draft In progress and a ready pull request In review, and a Blocked or Done the board already has is kept. That is how a release or a codename that spans repositories, such as the AppThreat Pelorus work, shows its pull requests next to its issues. Run it on a schedule if the board should keep up on its own, since the Free plan allows only one auto-add repository.
 
 ## Epics
 

@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 
 import {
   decideForBackfill,
+  decideForMilestoneClosedIssue,
   decideForMilestonePullRequest,
   decideForIssue,
   decideForPullRequest,
@@ -240,5 +241,20 @@ describe("decideForMilestonePullRequest", () => {
       labelFields,
     );
     assert.deepEqual(changes, [{ field: "Area", option: "Go", onlyIfUnset: true }]);
+  });
+});
+
+describe("decideForMilestoneClosedIssue", () => {
+  it("marks a closed issue Done unless it is Done or Blocked", () => {
+    for (const status of [undefined, "Triage", "Backlog", "In progress"]) {
+      assert.equal(
+        decideForMilestoneClosedIssue([], status, labelFields)[0].option,
+        "Done",
+        String(status),
+      );
+    }
+    for (const status of ["Done", "Blocked"]) {
+      assert.equal(decideForMilestoneClosedIssue([], status, labelFields).length, 0, status);
+    }
   });
 });

@@ -6,10 +6,10 @@
 //   node project/backfill.mjs [--project NUMBER]           print the changes
 //   node project/backfill.mjs [--project NUMBER] --apply   make them
 //
-// With --pull-requests it also adds the open and merged pull requests that
-// have a milestone, so a release or a codename that spans repositories shows
-// its pull requests next to its issues. They move to In progress, In review or
-// Done to match the pull request.
+// With --milestoned it also adds the open and merged pull requests, and the
+// closed issues, that have a milestone, so a release or a codename that spans
+// repositories shows its finished work next to its open issues. Pull requests
+// move to In progress, In review or Done to match, and closed issues to Done.
 //
 // The project is found by title unless a number is given. GitHub has no bulk
 // add, so the script adds one item at a time. Other options: --schema <path>.
@@ -18,6 +18,7 @@ import process from "node:process";
 
 import {
   decideForBackfill,
+  decideForMilestoneClosedIssue,
   decideForMilestonePullRequest,
 } from "./lib/decide.mjs";
 import { loadSchema } from "./lib/schema.mjs";
@@ -27,7 +28,7 @@ import { createItemWriter } from "./lib/items.mjs";
 const schema = loadSchema(process.argv.slice(2), process.env);
 const args = process.argv.slice(2);
 const dryRun = !args.includes("--apply");
-const withPullRequests = args.includes("--pull-requests");
+const withMilestoned = args.includes("--milestoned");
 const numberIndex = args.indexOf("--project");
 const lookup =
   numberIndex >= 0
@@ -75,7 +76,42 @@ for (const slug of schema.repositories) {
     }
     cursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null;
   } while (cursor);
-  if (withPullRequests) {
+  if (withMilestoned) {
+    cursor = null;
+    do {
+      const page = graphql(
+        `query($owner: String!, $name: String!, $cursor: String) {
+           repository(owner: $owner, name: $name) {
+             issues(first: 100, states: CLOSED, after: $cursor,
+                    orderBy: { field: UPDATED_AT, direction: DESC }) {
+               pageInfo { hasNextPage endCursor }
+               nodes {
+                 id number
+                 milestone { title }
+                 labels(first: 50) { nodes { name } }
+               }
+             }
+           }
+         }`,
+        { owner, name, cursor },
+      ).repository.issues;
+      for (const issue of page.nodes.filter((i) => i.milestone)) {
+        const itemId = addToProject(issue.id);
+        const values = currentValues(itemId);
+        apply(
+          itemId,
+          `${slug}#${issue.number}`,
+          decideForMilestoneClosedIssue(
+            issue.labels.nodes.map((l) => l.name),
+            values.Status,
+            schema.labelFields,
+          ),
+          values,
+        );
+        total += 1;
+      }
+      cursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null;
+    } while (cursor);
     cursor = null;
     do {
       const page = graphql(

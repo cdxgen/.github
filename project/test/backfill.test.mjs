@@ -75,7 +75,7 @@ process.stdout.write(JSON.stringify({ data }));
     ]);
   });
 
-  it("adds only milestoned pull requests with --pull-requests and marks merged ones Done", () => {
+  it("adds only milestoned pull requests with --milestoned and marks merged ones Done", () => {
     const directory = mkdtempSync(path.join(tmpdir(), "project-backfill-pr-"));
     const project = {
       id: "project-1",
@@ -101,7 +101,7 @@ if (q.includes("projectsV2")) {
     nodes: [{ id: "pr1", number: 7, isDraft: false, merged: true, milestone: { title: "v4" }, labels: { nodes: [{ name: "lang:go" }] } },
             { id: "pr2", number: 8, isDraft: false, merged: false, milestone: null, labels: { nodes: [] } }] } } };
 } else if (q.includes("issues(first")) {
-  data = { repository: { issues: { pageInfo: { hasNextPage: false, endCursor: null }, nodes: [] } } };
+  data = { repository: { issues: { pageInfo: { hasNextPage: false, endCursor: null }, nodes: q.includes("CLOSED") ? [{ id: "ci1", number: 5, milestone: { title: "v4" }, labels: { nodes: [] } }, { id: "ci2", number: 6, milestone: null, labels: { nodes: [] } }] : [] } } };
 } else if (q.includes("addProjectV2ItemById")) {
   appendFileSync(${JSON.stringify(log)}, "add " + request.variables.content + "\\n");
   data = { addProjectV2ItemById: { item: { id: "item-" + request.variables.content } } };
@@ -117,8 +117,10 @@ process.stdout.write(JSON.stringify({ data }));
     writeFileSync(gh, stub);
     chmodSync(gh, 0o755);
     const env = { ...process.env, PATH: `${directory}${path.delimiter}${process.env.PATH}` };
-    execFileSync(process.execPath, [script, "--apply", "--pull-requests"], { env, encoding: "utf8" });
+    execFileSync(process.execPath, [script, "--apply", "--milestoned"], { env, encoding: "utf8" });
     assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), [
+      "add ci1",
+      "set item-ci1 option-Done",
       "add pr1",
       "set item-pr1 option-Done",
       "set item-pr1 option-Go",

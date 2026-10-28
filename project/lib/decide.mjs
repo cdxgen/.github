@@ -155,3 +155,20 @@ export function decideForMilestonePullRequest(pr, status, labelFields) {
   }
   return changes.concat(labelChanges(pr.labels, labelFields, true));
 }
+
+/**
+ * Changes for a closed issue that carries a milestone. It is Done unless it
+ * already is or a person marked it Blocked.
+ *
+ * @param {string[]} labels Label names
+ * @param {string|undefined} status Current Status of the item
+ * @param {Object[]} labelFields The labelFields member of the schema
+ * @returns {Object[]} Changes
+ */
+export function decideForMilestoneClosedIssue(labels, status, labelFields) {
+  const changes = [];
+  if (status !== "Done" && status !== "Blocked") {
+    changes.push({ field: "Status", option: "Done", onlyIfUnset: false });
+  }
+  return changes.concat(labelChanges(labels, labelFields, true));
+}
