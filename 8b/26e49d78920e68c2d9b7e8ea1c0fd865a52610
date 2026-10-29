@@ -1,0 +1,19 @@
+plans/cdx-hbom-firmware-exposure.md
+  s_7dd898513ff3aa::t_94021ee4c08666 1-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8b26e49d78920e68c2d9b7e8ea1c0fd865a52610",
+  "prompts": {},
+  "sessions": {
+    "s_7dd898513ff3aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a7cf83d4-e558-4e3e-81b7-a75a00ebd4f2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
