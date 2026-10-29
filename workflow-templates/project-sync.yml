@@ -5,8 +5,11 @@ name: Project sync
 on:
   issues:
     types: [labeled, unlabeled]
+  # No `labeled`: a pull request opened with N labels would fire N+1 runs
+  # that queue behind one another, and the sync reads a pull request's labels
+  # from the events below anyway (they only fill an issue's empty Area).
   pull_request_target:
-    types: [opened, reopened, edited, ready_for_review, converted_to_draft, closed, labeled]
+    types: [opened, reopened, edited, ready_for_review, converted_to_draft, closed]
 
 concurrency:
   group: project-sync-${{ github.event.issue.number || github.event.pull_request.number }}
@@ -16,6 +19,12 @@ permissions: {}
 
 jobs:
   sync:
+    # Skip runs that cannot change the board: before the organization variable
+    # is shared with this repository, and for edits that leave the description,
+    # where the closing keywords live, unchanged (a title edit, for example).
+    if: >-
+      vars.PROJECT_NUMBER != '' &&
+      (github.event.action != 'edited' || github.event.changes.body != null)
     permissions:
       contents: read
     # Replace main with a commit SHA of cdxgen/.github once the workflow is stable.
