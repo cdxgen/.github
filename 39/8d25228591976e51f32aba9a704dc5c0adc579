@@ -1,0 +1,39 @@
+plans/romi-firmware-identity.md
+  s_7dd898513ff3aa::t_7da107daf85f26 1-73
+plans/romi-embedded-linux.md
+  s_7dd898513ff3aa::t_ce614f53b9f806 1-81
+plans/cdxgen-firmware-corpus.md
+  s_7dd898513ff3aa::t_f32718eef0b81e 1-98
+plans/romi-foundation.md
+  s_7dd898513ff3aa::t_4a102855ff147f 1-119
+plans/cdxgen-firmware-embedded-linux.md
+  s_7dd898513ff3aa::t_8b90522a5b6104 1-29,31-80
+  s_7dd898513ff3aa::t_07cbbb1e7bb59f 30
+plans/romi-uefi-formats.md
+  s_7dd898513ff3aa::t_478abf9ac0b46b 1-108
+plans/cdxgen-firmware-audit.md
+  s_7dd898513ff3aa::t_5950eb5c351582 1-20,22-65,67-109
+  s_7dd898513ff3aa::t_07cbbb1e7bb59f 21,66
+plans/cdxgen-firmware-uefi.md
+  s_7dd898513ff3aa::t_07cbbb1e7bb59f 71,75,79,83,87,95
+  s_7dd898513ff3aa::t_77a8dc6d2c2093 1-70,72-74,76-78,80-82,84-86,88-94,96-99
+plans/cdxgen-firmware-sbom.md
+  s_7dd898513ff3aa::t_561f4663ba724b 1-67,69-73,75-99,101-103,105-107,109-111,113-115,117-129
+  s_7dd898513ff3aa::t_07cbbb1e7bb59f 68,74,100,104,108,112,116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "398d25228591976e51f32aba9a704dc5c0adc579",
+  "prompts": {},
+  "sessions": {
+    "s_7dd898513ff3aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a7cf83d4-e558-4e3e-81b7-a75a00ebd4f2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
