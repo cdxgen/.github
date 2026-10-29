@@ -26,7 +26,6 @@ jobs:
       contents: read
     # Replace main with a commit SHA of cdxgen/.github once the workflow is stable.
     uses: cdxgen/.github/.github/workflows/project-sync.yml@main
-    with:
-      project-number: ${{ vars.PROJECT_NUMBER }}
     secrets:
       PROJECT_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+      PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}

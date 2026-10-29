@@ -12,9 +12,11 @@ on:
   workflow_call:
     inputs:
       project-number:
-        description: Number of the organization project to update
+        description: >-
+          Number of the organization project to update. Used only when the
+          PROJECT_NUMBER secret is not passed.
         type: string
-        required: true
+        default: ""
       ref:
         description: Ref of cdxgen/.github that holds the scripts. Pin a commit to freeze behavior.
         type: string
@@ -28,6 +30,11 @@ on:
     secrets:
       PROJECT_TOKEN:
         description: Token with write access to organization projects
+        required: false
+      PROJECT_NUMBER:
+        description: >-
+          Number of the organization project to update. The organizations keep
+          it as a secret, and a caller cannot pass a secret through an input.
         required: false
 
 permissions: {}
@@ -60,7 +67,7 @@ jobs:
           SCHEMA_REPOSITORY: ${{ inputs.schema-repository }}
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
           PROJECT_OWNER: ${{ github.repository_owner }}
-          PROJECT_NUMBER: ${{ inputs.project-number }}
+          PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER || inputs.project-number }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
             echo "PROJECT_TOKEN is not available to this repository. Skipping."
