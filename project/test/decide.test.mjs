@@ -8,6 +8,7 @@ import {
   decideForMilestonePullRequest,
   decideForIssue,
   decideForPullRequest,
+  inheritedMilestone,
   pickLabelOption,
 } from "../lib/decide.mjs";
 
@@ -258,3 +259,55 @@ describe("decideForMilestoneClosedIssue", () => {
     }
   });
 });
+
+describe("decideForMilestonePullRequest on a closed pull request", () => {
+  it("leaves a pull request closed without merging to the built-in workflow", () => {
+    const changes = decideForMilestonePullRequest(
+      { draft: false, merged: false, closed: true, labels: [] },
+      "In review",
+      labelFields,
+    );
+    assert.equal(changes.some((c) => c.field === "Status"), false);
+  });
+});
+
+describe("inheritedMilestone", () => {
+  const release = { id: "m-13.6", title: "13.6.0" };
+  const next = { id: "m-13.7", title: "13.7.0" };
+  const issue = (milestone, repository = "repo-1") => ({
+    repository: { id: repository },
+    milestone,
+  });
+
+  it("takes the milestone the closed issues agree on", () => {
+    assert.deepEqual(
+      inheritedMilestone(undefined, [issue(release), issue(release), issue(null)], "repo-1"),
+      release,
+    );
+  });
+
+  it("keeps a milestone the pull request already has", () => {
+    assert.equal(inheritedMilestone(next, [issue(release)], "repo-1"), undefined);
+  });
+
+  it("takes nothing when the issues disagree or have none", () => {
+    assert.equal(
+      inheritedMilestone(undefined, [issue(release), issue(next)], "repo-1"),
+      undefined,
+    );
+    assert.equal(inheritedMilestone(undefined, [issue(null)], "repo-1"), undefined);
+    assert.equal(inheritedMilestone(undefined, [], "repo-1"), undefined);
+  });
+
+  it("ignores issues of another repository, whose milestones are not this one's", () => {
+    assert.equal(
+      inheritedMilestone(undefined, [issue(release, "repo-2")], "repo-1"),
+      undefined,
+    );
+    assert.deepEqual(
+      inheritedMilestone(undefined, [issue(next, "repo-2"), issue(release)], "repo-1"),
+      release,
+    );
+  });
+});
+

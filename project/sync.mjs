@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Reflects the events that the project's built-in workflows cannot handle onto
-// the organization project: the blocked label, labels that fill Area, and pull
+// the organization project: the blocked label, labels that fill Area, pull
 // requests to branches other than the default, whose closing keywords GitHub
-// does not record.
+// does not record, and the card a pull request has of its own, along with the
+// milestone it takes from the issues it closes.
 //
 // It runs inside the reusable workflow in .github/workflows/project-sync.yml
 // and reads the event from GITHUB_EVENT_PATH. Every value from the event is
@@ -13,12 +14,19 @@
 //   PROJECT_OWNER    organization that owns the project
 //   PROJECT_NUMBER   project number; the script does nothing when it is empty
 //   GH_TOKEN         token with write access to organization projects
+//   REPO_TOKEN       token that can set a pull request's milestone in the
+//                    calling repository; without it no milestone is set
 //   DRY_RUN          set to 1 to print the changes without writing them
 
 import { readFileSync } from "node:fs";
 import process from "node:process";
 
-import { decideForIssue, decideForPullRequest } from "./lib/decide.mjs";
+import {
+  decideForIssue,
+  decideForMilestonePullRequest,
+  decideForPullRequest,
+  inheritedMilestone,
+} from "./lib/decide.mjs";
 import { loadSchema } from "./lib/schema.mjs";
 import { findProject, graphql } from "./lib/github.mjs";
 import { createItemWriter } from "./lib/items.mjs";
@@ -42,7 +50,7 @@ if (!project) {
   console.error(`Project ${owner}/${number} was not found.`);
   process.exit(1);
 }
-const { addToProject, currentValues, apply } = createItemWriter(
+const { addToProject, findItem, currentValues, apply } = createItemWriter(
   project,
   schema,
   dryRun,
@@ -58,7 +66,9 @@ function closedIssues(pr, repository) {
     `query($id: ID!) {
        node(id: $id) {
          ... on PullRequest {
-           closingIssuesReferences(first: 20) { nodes { id number state } }
+           closingIssuesReferences(first: 20) {
+             nodes { id number state repository { id } milestone { id title } }
+           }
          }
        }
      }`,
@@ -71,7 +81,9 @@ function closedIssues(pr, repository) {
     const found = graphql(
       `query($owner: String!, $name: String!, $number: Int!) {
          repository(owner: $owner, name: $name) {
-           issue(number: $number) { id number state }
+           issue(number: $number) {
+             id number state repository { id } milestone { id title }
+           }
          }
        }`,
       { owner: repository.owner.login, name: repository.name, number: issueNumber },
@@ -117,7 +129,8 @@ if (eventName === "issues") {
       labels: names(pr.labels),
     },
   };
-  for (const linked of closedIssues(pr, payload.repository)) {
+  const issues = closedIssues(pr, payload.repository);
+  for (const linked of issues) {
     const itemId = addToProject(linked.id);
     const values = currentValues(itemId);
     apply(
@@ -131,6 +144,75 @@ if (eventName === "issues") {
       values,
     );
   }
+  syncPullRequestCard(pr, issues, event.pullRequest);
 } else {
   console.log(`Event ${eventName} is not handled.`);
+}
+
+/**
+ * Sets the milestone a pull request takes from the issues it closes, through
+ * the repository's own token, since the project token need not reach the
+ * repository. Returns the milestone the pull request has afterwards.
+ */
+function settleMilestone(pr, issues) {
+  const own = pr.milestone
+    ? { id: pr.milestone.node_id, title: pr.milestone.title }
+    : undefined;
+  const inherited = inheritedMilestone(own, issues, payload.repository?.node_id);
+  if (!inherited) {
+    return own;
+  }
+  const token = process.env.REPO_TOKEN;
+  if (!token) {
+    console.log(
+      `pull request #${pr.number}: its issues are aimed at ${inherited.title}, but REPO_TOKEN is not set, so the milestone is left alone.`,
+    );
+    return own;
+  }
+  console.log(`pull request #${pr.number}: Milestone (unset) -> ${inherited.title}`);
+  if (dryRun) {
+    return inherited;
+  }
+  try {
+    graphql(
+      `mutation($pr: ID!, $milestone: ID!) {
+         updatePullRequest(input: { pullRequestId: $pr, milestoneId: $milestone }) {
+           pullRequest { id }
+         }
+       }`,
+      { pr: pr.node_id, milestone: inherited.id },
+      { token },
+    );
+  } catch (error) {
+    console.warn(
+      `pull request #${pr.number}: the milestone could not be set (${error.message}).`,
+    );
+    return own;
+  }
+  return inherited;
+}
+
+/**
+ * Keeps the card a pull request has of its own in step, by the rules the
+ * milestoned backfill uses. A pull request gets a card once it has a
+ * milestone; one already on the board, however it got there, is updated too.
+ */
+function syncPullRequestCard(pr, issues, state) {
+  const milestone = settleMilestone(pr, issues);
+  const existing = findItem(pr.node_id);
+  if (!milestone && !existing) {
+    return;
+  }
+  const itemId = existing ?? addToProject(pr.node_id);
+  const values = currentValues(itemId);
+  apply(
+    itemId,
+    `pull request #${pr.number}`,
+    decideForMilestonePullRequest(
+      { ...state, closed: !state.open },
+      values.Status,
+      schema.labelFields,
+    ),
+    values,
+  );
 }

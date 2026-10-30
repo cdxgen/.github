@@ -48,15 +48,22 @@ function sleep(ms) {
  *
  * @param {string} query GraphQL document
  * @param {Object} variables GraphQL variables
+ * @param {Object} [options] { token } to send the request with a token other
+ *   than GH_TOKEN, such as the repository's own token for a write the project
+ *   token has no permission for
  * @returns {Object} The data member of the response
  */
-export function graphql(query, variables = {}) {
+export function graphql(query, variables = {}, options = {}) {
+  const env = options.token
+    ? { ...process.env, GH_TOKEN: options.token }
+    : process.env;
   let output;
   for (let attempt = 1; ; attempt++) {
     try {
       output = execFileSync("gh", ["api", "graphql", "--input", "-"], {
         input: JSON.stringify({ query, variables }),
         encoding: "utf8",
+        env,
         maxBuffer: 32 * 1024 * 1024,
       });
       break;

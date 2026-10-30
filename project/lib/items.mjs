@@ -7,7 +7,7 @@ import { graphql } from "./github.mjs";
  * @param {Object} project Project with its fields, from findProject
  * @param {Object} schema The parsed schema.json
  * @param {boolean} dryRun Print changes without writing them
- * @returns {Object} addToProject, currentValues and apply
+ * @returns {Object} addToProject, findItem, currentValues and apply
  */
 export function createItemWriter(project, schema, dryRun) {
   const fieldsByName = new Map(project.fields.nodes.map((f) => [f.name, f]));
@@ -35,23 +35,31 @@ export function createItemWriter(project, schema, dryRun) {
       if (!String(error.message).includes("already exists")) {
         throw error;
       }
-      const found = graphql(
-        `query($id: ID!) {
-           node(id: $id) {
-             ... on Issue { projectItems(first: 50) { nodes { id project { id } } } }
-             ... on PullRequest { projectItems(first: 50) { nodes { id project { id } } } }
-           }
-         }`,
-        { id: contentId },
-      );
-      const item = found.node?.projectItems?.nodes?.find(
-        (n) => n.project.id === project.id,
-      );
-      if (!item) {
+      const itemId = findItem(contentId);
+      if (!itemId) {
         throw error;
       }
-      return item.id;
+      return itemId;
     }
+  }
+
+  /**
+   * The id of the item an issue or pull request already has on the board, or
+   * undefined when it has none.
+   */
+  function findItem(contentId) {
+    const found = graphql(
+      `query($id: ID!) {
+         node(id: $id) {
+           ... on Issue { projectItems(first: 50) { nodes { id project { id } } } }
+           ... on PullRequest { projectItems(first: 50) { nodes { id project { id } } } }
+         }
+       }`,
+      { id: contentId },
+    );
+    return found.node?.projectItems?.nodes?.find(
+      (n) => n.project.id === project.id,
+    )?.id;
   }
 
   function currentValues(itemId) {
@@ -112,5 +120,5 @@ export function createItemWriter(project, schema, dryRun) {
     }
   }
 
-  return { addToProject, currentValues, apply };
+  return { addToProject, findItem, currentValues, apply };
 }
