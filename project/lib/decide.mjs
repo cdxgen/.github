@@ -131,9 +131,10 @@ const EARLY = [undefined, "Triage", "Backlog"];
  * Changes for a pull request that carries a milestone and is kept on the board
  * as an item of its own, so a release or a codename that spans repositories
  * shows its pull requests next to its issues. A person's Blocked and a Done
- * the board already has are left alone.
+ * the board already has are left alone, and a pull request closed without
+ * merging is left to the built-in Item closed workflow.
  *
- * @param {Object} pr { draft, merged, labels }
+ * @param {Object} pr { draft, merged, closed, labels }
  * @param {string|undefined} status Current Status of the item
  * @param {Object[]} labelFields The labelFields member of the schema
  * @returns {Object[]} Changes
@@ -142,7 +143,9 @@ export function decideForMilestonePullRequest(pr, status, labelFields) {
   const changes = [];
   const set = (option) =>
     changes.push({ field: "Status", option, onlyIfUnset: false });
-  if (pr.merged) {
+  if (pr.closed && !pr.merged) {
+    // Nothing to set.
+  } else if (pr.merged) {
     if (status !== "Done" && status !== "Blocked") {
       set("Done");
     }
@@ -171,4 +174,28 @@ export function decideForMilestoneClosedIssue(labels, status, labelFields) {
     changes.push({ field: "Status", option: "Done", onlyIfUnset: false });
   }
   return changes.concat(labelChanges(labels, labelFields, true));
+}
+
+/**
+ * The milestone a pull request takes from the issues it closes, when it has
+ * none of its own. Milestones belong to one repository, so only the issues of
+ * the pull request's repository count, and they must agree: issues aimed at
+ * two different milestones give the pull request neither.
+ *
+ * @param {Object|undefined} own The pull request's own milestone
+ * @param {Object[]} issues Closed issues, { repository: { id }, milestone: { id, title } }
+ * @param {string} repositoryId Node id of the pull request's repository
+ * @returns {Object|undefined} The milestone to set, { id, title }
+ */
+export function inheritedMilestone(own, issues, repositoryId) {
+  if (own) {
+    return undefined;
+  }
+  const candidates = new Map();
+  for (const issue of issues ?? []) {
+    if (issue?.repository?.id === repositoryId && issue.milestone?.id) {
+      candidates.set(issue.milestone.id, issue.milestone);
+    }
+  }
+  return candidates.size === 1 ? [...candidates.values()][0] : undefined;
 }

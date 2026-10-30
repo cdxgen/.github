@@ -8,8 +8,10 @@ on:
   # No `labeled`: a pull request opened with N labels would fire N+1 runs
   # that queue behind one another, and the sync reads a pull request's labels
   # from the events below anyway (they only fill an issue's empty Area).
+  # milestoned puts a pull request on the board as soon as someone aims it at
+  # a release.
   pull_request_target:
-    types: [opened, reopened, edited, ready_for_review, converted_to_draft, closed]
+    types: [opened, reopened, edited, ready_for_review, converted_to_draft, closed, milestoned]
 
 concurrency:
   group: project-sync-${{ github.event.issue.number || github.event.pull_request.number }}
@@ -22,10 +24,14 @@ jobs:
     # An edit that leaves the description unchanged, such as a title edit,
     # cannot change the board: the closing keywords live in the description.
     if: github.event.action != 'edited' || github.event.changes.body != null
+    # pull-requests write lets the sync give a pull request the milestone of
+    # the issues it closes. The job runs no code from the pull request.
     permissions:
       contents: read
+      pull-requests: write
     # Replace main with a commit SHA of cdxgen/.github once the workflow is stable.
     uses: cdxgen/.github/.github/workflows/project-sync.yml@main
     secrets:
       PROJECT_TOKEN: ${{ secrets.PROJECT_TOKEN }}
       PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
+      REPO_TOKEN: ${{ github.token }}
