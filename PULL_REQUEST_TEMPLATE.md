@@ -6,6 +6,13 @@
 
 Write `Closes #123` so the project board follows this pull request. Use `Refs #123` for an epic or a partial change.
 
+## Credits
+
+<!-- Whose bug report, reproducer, sample code or earlier work does this change use? Add the same trailers to the commits. See CONTRIBUTING.md.
+Reported-by: Name <id+login@users.noreply.github.com>
+Link: https://github.com/OWNER/REPO/issues/123
+-->
+
 ## How was this tested?
 
 ## AI use
