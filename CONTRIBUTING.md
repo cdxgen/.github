@@ -13,6 +13,23 @@ Thanks for helping out. This guide applies to every repository in the cdxgen org
 - Keep each pull request focused on one change, and explain what changed and why in plain words.
 - Add or update tests and documentation along with the change, and make sure the required checks pass.
 
+## Crediting others
+
+If a change uses someone else's work, credit them at the end of the commit message, with a link to where that work is. That work might be a bug report, a reproducer, sample code, a root-cause investigation or an earlier pull request.
+
+```
+Reported-by: Jane Doe <12345678+janedoe@users.noreply.github.com>
+Link: https://github.com/OWNER/REPO/issues/123
+Helped-by: John Roe <87654321+johnroe@users.noreply.github.com>
+Link: https://github.com/OWNER/REPO/issues/123#issuecomment-456
+```
+
+- `Reported-by` is for the person who filed the bug report the change fixes. `Helped-by` is for anyone else whose ideas, sample code, reproducer or investigation the change uses.
+- Use the name on the person's GitHub profile and their GitHub noreply address, `<id>+<login>@users.noreply.github.com`.
+- Repeat the same lines under "Credits" in the pull request description.
+
+Maintainers do the same when they merge work that builds on yours. If you want to be credited under a different name or address, or not at all, say so in the issue or pull request.
+
 ## Using AI tools
 
 AI coding assistants and agents are welcome here, and the maintainers use them for most of their own work. What we ask in return:
