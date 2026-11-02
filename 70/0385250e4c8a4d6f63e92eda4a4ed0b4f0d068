@@ -1,0 +1,23 @@
+plans/cdxgen-agent-ci-recipes.md
+  s_7e5f47b40b9a6f::t_7cfbfe81227b10 18,24,30,39,49,53,59,61,65
+plans/cdxgen-agent-plugins-portable.md
+  s_7e5f47b40b9a6f::t_bafa1690ffa38d 44,70
+plans/cdxgen-claude-plugin-hardening.md
+  s_7e5f47b40b9a6f::t_729d2da65dda90 46-48,52,57,61-63,67,82-84,86,88,90-92,94,96,112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "700385250e4c8a4d6f63e92eda4a4ed0b4f0d068",
+  "prompts": {},
+  "sessions": {
+    "s_7e5f47b40b9a6f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e6d3f67e-2997-4ba4-8999-46e49eac509f",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
