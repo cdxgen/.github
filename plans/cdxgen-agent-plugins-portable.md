@@ -41,7 +41,7 @@ Out of scope:
 The plugin directory keeps its current place, and gains a portable manifest:
 
 ```text
-claude-plugin/                 (renamed in D1 if we decide to)
+agent-plugin/                  (renamed from claude-plugin/ in D1)
 ├── plugin.json                Agent Plugins 1.0.0 manifest
 ├── .claude-plugin/plugin.json Claude Code manifest (hooks, userConfig, agents)
 ├── skills/                    shared by every client
@@ -67,7 +67,7 @@ The name, version, description, author, licence and keywords appear in several m
 
 ### D1. Agent Plugins manifest and manifest generator
 
-Add `plugin.json` with `"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"` to the plugin directory. Write the generator script and the CI drift check. Decide whether to rename `claude-plugin/` to a neutral name such as `agent-plugin/`. A rename changes only the marketplace `source` path, not the plugin name, so existing installs keep working. Done when the manifest validates against the published schema and CI fails on drift.
+Add `plugin.json` with `"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"` to the plugin directory. Write the generator script and the CI drift check. Rename `claude-plugin/` to `agent-plugin/`. The rename changes only the marketplace `source` path, not the plugin name, so existing installs keep working. The `.claude-plugin/` manifest directories keep their name, because Claude Code looks for them there. Done when the manifest validates against the published schema and CI fails on drift.
 
 ### D2. Codex
 
