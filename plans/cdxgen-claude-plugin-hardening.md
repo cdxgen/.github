@@ -43,24 +43,28 @@ Out of scope:
 
 ### Keep the skills portable
 
-The same `SKILL.md` files will be loaded by Codex, Copilot and others once the portable plugin lands. Frontmatter fields that only Claude Code understands are ignored by the other clients, so they are safe to add. One exception matters: claude.ai uploads and the Skills API reject `argument-hint`, so the directory listing build must strip it or the skills must avoid it. Deliverable D3 decides which.
+The same `SKILL.md` files will be loaded by Codex, Copilot and others once the portable plugin lands. Frontmatter fields that only Claude Code understands are ignored by the other clients, so they are safe to add. One exception matters: claude.ai uploads and the Skills API reject `argument-hint`, so the skills do not use it.
+
+The portable plugin plan renames the plugin directory from `claude-plugin/` to `agent-plugin/`. Deliverables that land after the rename, such as the eval suite, use the new name.
 
 ### Evals measure behaviour, not prose
 
-Each eval case is a prompt in `claude-plugin/evals/<case>/prompt.md` with graders in `graders/`. Two kinds of case matter:
+Each eval case is a prompt in `agent-plugin/evals/<case>/prompt.md` with graders in `graders/`. Two kinds of case matter:
 
 - **Selection.** A natural request ("make an SBOM for this Go service", "is this BOM CRA compliant?") must load the right skill. Graders: `tool_used` on the Skill tool, and a regex on the command that runs.
 - **Safety.** The agent must run `--dry-run` before a real scan, use `--no-install-deps` or `--lifecycle pre-build` when it is told it is in CI, use absolute paths, refuse to print a Dependency-Track key, and ask before uploading. Graders: `tool_order`, regex and `llm`.
 
-Fixtures are small projects already in `test/data` or `cdxgen-test-fixtures`. Each run makes real model calls, so the suite runs on manual dispatch and on a weekly schedule rather than on every pull request, with a pass threshold of 0.8 to start.
+Fixtures are small projects already in `test/data` or `cdxgen-test-fixtures`. Each run makes real model calls, so the maintainer runs the suite locally with their own Claude Code login, before a release and after a skill changes, with a pass threshold of 0.8 to start. cdxgen's CI does not run it and the repository keeps no model API key.
 
 ### Configuration replaces copy-and-paste
 
-Today the `dependency-track-upload` skill tells the user to export environment variables. With `userConfig`, the plugin asks once for the server URL, the API key (`sensitive: true`), the TEA endpoint and token, a default `--spec-version`, and whether to prefer the container image over a local install. Skills read the values through `${user_config.KEY}`. Sensitive values appear only as placeholders in skill content.
+Today the `dependency-track-upload` skill tells the user to export environment variables. With `userConfig`, the plugin asks once for the server URL, the TEA endpoint, a default `--spec-version`, and whether to prefer the container image over a local install. Skills read the values through `${user_config.KEY}`.
+
+The Dependency-Track API key and the TEA token stay out of `userConfig`. Sensitive `userConfig` values reach hooks and MCP servers, but not the commands that the agent runs through Bash, so an upload skill could never use them. The keys keep coming from the environment variables cdxgen already reads, set by the user in their own shell. The MCP server plan is the place to pass them another way.
 
 ### Side-effecting skills are user-invoked only
 
-`bom-signing` and `dependency-track-upload` act on keys and on external servers. They get `disable-model-invocation: true`, so they run only when the user types `/cdxgen:bom-signing` or `/cdxgen:dependency-track-upload`. Generation skills stay model-invocable but move to `context: fork` so their output stays out of the main conversation, and the parent gets back a summary and the BOM path.
+`bom-signing` and `dependency-track-upload` act on keys and on external servers. They get `disable-model-invocation: true`, so they run only when the user types `/cdxgen:bom-signing` or `/cdxgen:dependency-track-upload`. Generation skills stay model-invocable and stay in the main context. A forked skill receives only its own text, not the user's request, and runs in the background by default, which breaks `sbom-generate` and `sbom-fidelity-loop`, the latter because it asks the user before each fix. The read-only reviewer subagent (D5) keeps review output out of the main conversation instead.
 
 ### Hooks warn, never act
 
@@ -75,20 +79,21 @@ Add `claude plugin validate --strict ./claude-plugin` to the lint workflow. Add 
 
 ### D2. Eval suite for skill selection and safety rules
 
-Create `claude-plugin/evals/` with at least one selection case per skill and one case per rule in `reference/safety.md`. Add a workflow that runs `claude plugin eval ./claude-plugin --json results.json --threshold 0.8 --trust-plugin` on manual dispatch and weekly, and uploads the results. Document how to run it locally. Done when the suite passes at the threshold on the current skills and fails when a safety instruction is deleted from a skill.
+Create `agent-plugin/evals/` with at least one selection case per model-invocable skill, a negative case each for `bom-signing` and `dependency-track-upload`, and one case per rule in `reference/safety.md`. Under the default `--ablation with-without`, a `tool_used` grader on the Skill tool only shows that the plugin fired and does not count toward the score, so each selection case also needs a scored grader, such as a regex on the command that runs. Document the local command, `claude plugin eval ./agent-plugin --threshold 0.8 --no-publish`, in the plugin README. There is no CI workflow for the suite. Done when the suite passes at the threshold on the current skills, fails when a safety instruction is deleted from a skill, and the scores of a local run are recorded in the pull request.
 
-### D3. Skill frontmatter: invocation control, forked context and file triggers
+### D3. Skill frontmatter: invocation control
 
-- `disable-model-invocation: true` on `bom-signing` and `dependency-track-upload`.
-- `context: fork` on `sbom-generate`, `container-sbom`, `os-hardware-inventory`, `bom-evidence` and `sbom-fidelity-loop`, each ending with a short summary and the output path.
-- `paths` globs on `bom-explore`, `bom-audit` and `bom-convert-validate` for `*.cdx.json`, `bom.json` and `*.spdx.json`.
-- Decide whether to use `argument-hint`, given that claude.ai rejects it.
+Add `disable-model-invocation: true` to `bom-signing` and `dependency-track-upload`. Done when an eval in D2 shows that `bom-signing` is not invoked without the slash command.
 
-Done when the D2 evals still pass and an eval shows that `bom-signing` is not invoked without the slash command.
+Three other changes were considered and are not planned:
 
-### D4. userConfig for servers, credentials and defaults
+- `context: fork` on the long-running skills, for the reasons given under Approach.
+- `paths` globs on `bom-explore`, `bom-audit` and `bom-convert-validate`. `paths` restricts automatic activation to matching files in the working directory rather than adding a trigger, so a BOM outside the project, or one named `sbom.json`, would stop loading `bom-audit`.
+- `argument-hint`, which claude.ai uploads and the Skills API reject.
 
-Add `userConfig` for the Dependency-Track URL and API key, the TEA endpoint and token, the default spec version and the preferred runtime (local CLI or container image). Update `dependency-track-upload`, `sbom-generate` and `container-sbom` to use them, and update the README. Done when an upload works with the key entered only through the plugin prompt and the key never appears in the transcript.
+### D4. userConfig for servers and defaults
+
+Add `userConfig` for the Dependency-Track URL, the TEA endpoint, the default spec version and the preferred runtime (local CLI or container image). No key or token goes into `userConfig`. Update `dependency-track-upload`, `sbom-generate` and `container-sbom` to use the values, falling back to today's behaviour when a value is empty, and update the README. Done when the skills use the configured values, and the skill text still tells the agent never to ask for, print or write a key.
 
 ### D5. Read-only BOM reviewer subagent
 
@@ -104,9 +109,8 @@ Add `icon`, `documentationUrl`, `supportUrl` and `privacyPolicyUrl` to `plugin.j
 
 ## Risks and open questions
 
-- Eval runs cost money and need an API key in the repository secrets. Who owns the budget and the key?
+- Eval runs cost money. They run locally on the maintainer's own login, not in CI, so how often they run is a judgement made at release time.
 - Directory submission needs a paid claude.ai plan with Owner rights.
-- `context: fork` changes how results reach the user. If the summaries hide information that users need, D3 may have to keep some skills in the main context.
 - Hook trust prompts may annoy users. If they do, the lockfile hook stays opt-in and the SessionStart hook may move behind `userConfig` too.
 
 ## Outcome
