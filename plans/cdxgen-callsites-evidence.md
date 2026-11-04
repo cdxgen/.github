@@ -93,10 +93,26 @@ Each project reports how many records were attributed by `purl`, by ecosystem ru
 component and not at all, and occurrence recall and precision against the ground truth stay within
 0.02 of the slice's own package-level numbers.
 
+Each occurrence from a callsites record also carries the record's position and name: `offset` from
+its `col` and `symbol` from its `module` and `path` (CycloneDX 1.6 has both fields). Today an
+occurrence holds only `location` and `line`, so the many uses on one line of a theme file, or one
+member read thirty times, cannot be told apart. evinse keeps one occurrence per use site, as the
+slice does (decision 0001 in AppThreat/.github), and does not collapse repeated reads of a member.
+A tool that wants one row per file or per member can group on `symbol`. Done when poku tests show
+two uses on one line as two occurrences with different `offset` values, and an occurrence seeded
+from an input BOM without these fields is not duplicated by the slice's version of it.
+
 ### D3. Filters and annotations (cdxgen/cdxgen#4692)
 
 Apply `--exclude` to callsites records (`file`, both path separators), embed the slice under
 `--annotate`, and add it to the slices-file checks in `bin/cdxgen.js`. Done with poku tests.
+
+Every location that enters the occurrence set is written with `/`, whatever its source. On Windows
+`initFromSbom` seeds the set with the input BOM's backslash locations while the slices give forward
+slashes, so one place is counted twice: on ngx-admin 965 to 1111 of the occurrences in three evinse
+runs were such duplicates (cdxgen/cdxgen#4693, comment 6634492064). Done when a poku test seeds a
+BOM with backslash locations, merges a slice with forward slashes for the same places, and gets one
+occurrence for each.
 
 ### D4. Occurrences from callsites by default (cdxgen/cdxgen#4693)
 
@@ -114,6 +130,9 @@ occurrence recall against the ground truth is at least the slice's.
   occurrence numbers in pull requests are reproduced from it by a maintainer.
 - A Java BOM can need Maven to run, and some corpus projects cannot be built safely. Where that
   blocks a measurement, the pull request says so.
+- On ngx-admin 1233 of 3229 occurrences sit at a file and line that no callsites record names; they
+  come from `usages` and cdxgen's own heuristics. D4 must say which of them it keeps, so that the
+  switch does not drop occurrences that only those sources find.
 
 ## Outcome
 
