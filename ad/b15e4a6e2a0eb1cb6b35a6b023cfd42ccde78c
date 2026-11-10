@@ -1,0 +1,25 @@
+plans/kosi-memory-safety.md
+  s_4ad7f8b75709a4::t_46205a303ef180 1-92
+plans/rusi-memory-safety.md
+  s_4ad7f8b75709a4::t_7410ac66e37ff9 1-121
+plans/golem-memory-safety.md
+  s_4ad7f8b75709a4::t_d3ae7a0bbbe3dd 1-94
+plans/plugins-memory-safety.md
+  s_4ad7f8b75709a4::t_951a27c16ac8a2 1-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "adb15e4a6e2a0eb1cb6b35a6b023cfd42ccde78c",
+  "prompts": {},
+  "sessions": {
+    "s_4ad7f8b75709a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a786961f-a275-46fa-b402-ea9eacc6881f",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
