@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/NUMBER |
+| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/172 |
 | Owner | @prabhu |
 | AI use | Pair |
 | Corpus | `plugins-memory-safety.corpus.json`, added with the corpus deliverable of [plugins-memory-safety.md](plugins-memory-safety.md) |
@@ -90,23 +90,23 @@ The Rust arms of the shared corpus, stored as described in the overview plan:
 
 ## Deliverables
 
-### D1. Foundations: `unsafe impl`, SEND-001, findings and SARIF
+### D1. Foundations: `unsafe impl`, SEND-001, findings and SARIF (cdxgen/cdxgen-plugins-bin#173)
 
 `unsafe impl` detection in both backends, the inventory and its loader, the finding types in `rusi-schema`, the `memory-safety` command with `--format json|sarif` and `--min-confidence`, RUSI-MS-SEND-001, the hand-written fixtures for SEND-001, and the check of whether the standard-library arm can run. Done when SEND-001 meets the corpus gate and the SARIF output validates against the official schema and the shared golden file.
 
-### D2. Trust rules
+### D2. Trust rules (cdxgen/cdxgen-plugins-bin#174)
 
 UntrustedCall and Guard, and RUSI-MS-TRUST-001 to 003, using the existing data-flow engine with new source and sink categories. Done when the `join`, `str::replace` and `Searcher` reproductions are found, their fixed twins are silent, and the advisory arm's trust cases are scored.
 
-### D3. Panic-safety rules
+### D3. Panic-safety rules (cdxgen/cdxgen-plugins-bin#175)
 
 MayUnwind, DropGuard and RUSI-MS-PANIC-001 to 003. Done when the `MapWindows::clone` and unwinding-allocator reproductions are found, `SetLenOnDrop`, `set_len(0)` and `ManuallyDrop` controls are silent, and the Miri and advisory arms are scored.
 
-### D4. Platform-boundary rules
+### D4. Platform-boundary rules (cdxgen/cdxgen-plugins-bin#176)
 
 LockState and RUSI-MS-SYS-001 to 003, at low confidence. Done when the `exec`, thread-local exit and signal-stack reproductions are found and the real-project triage shows how many findings a reviewer would have to read.
 
-### D5. Corpus arms and gates
+### D5. Corpus arms and gates (cdxgen/cdxgen-plugins-bin#177)
 
 The standard-library, advisory, Miri and real-project arms, their manifest entries and digests, and the CI job that runs the hand-written arm on every pull request and the rest nightly. Done when the job fails on a planted false positive and on a planted recall drop.
 

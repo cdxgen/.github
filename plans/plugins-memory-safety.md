@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/NUMBER |
+| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/170 |
 | Owner | @prabhu |
 | AI use | Pair |
 | Corpus | `plugins-memory-safety.corpus.json`, added with D1 once the first items are stored |
@@ -54,23 +54,23 @@ The rusi work goes first because the blog's bug classes are concrete and rusi al
 
 ## Deliverables
 
-### D1. Finding contract, SARIF layout and scorer
+### D1. Finding contract, SARIF layout and scorer (cdxgen/cdxgen-plugins-bin#171)
 
 The finding JSON Schema, a golden SARIF file, the marker grammar and the scorer, in cdxgen-plugins-bin. Done when the scorer's self-test passes, a hand-made findings file validates against the schema and the golden SARIF validates against the official SARIF 2.1.0 schema.
 
-### D2. rusi memory-safety
+### D2. rusi memory-safety (cdxgen/cdxgen-plugins-bin#172)
 
 The rusi plan: [rusi-memory-safety.md](rusi-memory-safety.md).
 
-### D3. golem memory-safety
+### D3. golem memory-safety (cdxgen/cdxgen-plugins-bin#178)
 
 The golem plan: [golem-memory-safety.md](golem-memory-safety.md).
 
-### D4. kosi native-boundary safety
+### D4. kosi native-boundary safety (cdxgen/cdxgen-plugins-bin#184)
 
 The kosi plan: [kosi-memory-safety.md](kosi-memory-safety.md).
 
-### D5. cdxgen integration
+### D5. cdxgen integration (cdxgen/cdxgen#4777)
 
 cdxgen keeps findings out of the BOM text and keeps their shape in it. Per purl it adds `cdx:<tool>:memorySafety:ruleIds`, `:cwes`, `:findingCount` and `:maxConfidence`, and adds `evidence.occurrences` for the sites without code snippets. Metadata gets the run's counts per rule. The raw findings and SARIF stay files, written next to the BOM when `--semantics-slices-file` or a new `--memory-safety-sarif <path>` is given. Audit rule packs (`data/rules/rusi-rust.yaml`, and the matching golem and kosi rules) report high-confidence findings in runtime code. `docs/CUSTOM_PROPERTIES.md`, `docs/EVINSE.md` and `docs/BOM_AUDIT.md` describe the properties and rules, and `cdxi` gains `.unsafehotspots`. Done when `lib/ecosystems/rusi.poku.js`, `golem.poku.js` and the kosi tests cover the mapping, a test asserts that no message text or argument value reaches the BOM, and a repository test runs evinse with memory safety on one public crate.
 

@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/NUMBER |
+| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/178 |
 | Owner | @prabhu |
 | AI use | Pair |
 | Corpus | `plugins-memory-safety.corpus.json`, added with the corpus deliverable of [plugins-memory-safety.md](plugins-memory-safety.md) |
@@ -63,23 +63,23 @@ Findings follow the shared contract in a new `memorySafetyFindings` section of t
 
 ## Deliverables
 
-### D1. Findings, SARIF and the `finding` annotation
+### D1. Findings, SARIF and the `finding` annotation (cdxgen/cdxgen-plugins-bin#179)
 
 The finding type, `analyze --format sarif`, the annotation kind and its evaluator, and the inventory with its loader. Done when a hand-written finding case passes and fails the ratchet as expected and the SARIF output validates against the official schema and the shared golden file.
 
-### D2. Pointer rules
+### D2. Pointer rules (cdxgen/cdxgen-plugins-bin#180)
 
 UnsafeConversion, Extent and Guard, and PTR-001, PTR-002, HDR-001, SLICE-001, STR-001 and REFL-001. Done when the hand-written and `unsafeptr` arms meet the gate and the comparison with vet is recorded.
 
-### D3. cgo and mapping rules
+### D3. cgo and mapping rules (cdxgen/cdxgen-plugins-bin#181)
 
 NativeAllocationState and CgoArgument, and CGO-001 to 003 and MMAP-001. `C.free` moves from a taint sink to a deallocation fact without changing existing flow results, which `testdata/seam-parity.json` and the corpus check. Done when the cgo pointer-passing table is scored and go-sqlite3 and gopacket are triaged.
 
-### D4. Finalizer rule
+### D4. Finalizer rule (cdxgen/cdxgen-plugins-bin#182)
 
 Finalizer and KEEP-001. Done when the hand-written cases pass and the real-project triage shows the review cost.
 
-### D5. Go corpus arms
+### D5. Go corpus arms (cdxgen/cdxgen-plugins-bin#183)
 
 The labelled, advisory and real-project arms, their manifest entries and digests, and the CI split between the `quick` tier on every pull request and the rest nightly.
 

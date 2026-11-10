@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/NUMBER |
+| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/184 |
 | Owner | @prabhu |
 | AI use | Pair |
 | Corpus | `plugins-memory-safety.corpus.json`, added with the corpus deliverable of [plugins-memory-safety.md](plugins-memory-safety.md) |
@@ -61,23 +61,23 @@ Findings follow the shared contract in a new `memorySafetyFindings` section. `--
 
 ## Deliverables
 
-### D1. Boundary inventory and findings
+### D1. Boundary inventory and findings (cdxgen/cdxgen-plugins-bin#185)
 
 Java `native` methods, initializer `loadLibrary`, the inventory, the finding type, SARIF for findings, the `finding` annotation, and JNI-001. Done when the hand-written JNI cases pass the ratchet and the SARIF output validates against the official schema and the shared golden file.
 
-### D2. Unsafe and JNA rules
+### D2. Unsafe and JNA rules (cdxgen/cdxgen-plugins-bin#186)
 
 Extent, Guard and NativeAllocationState, the new sink categories, and UNSAFE-001, UNSAFE-002, JNA-001, BUF-001 and JNI-002. Done when the hand-written arm meets the gate and netty and lz4-java are triaged.
 
-### D3. FFM rules
+### D3. FFM rules (cdxgen/cdxgen-plugins-bin#187)
 
 FFM-001 and FFM-002, with the JDK tests as negative controls. Done when the JDK arm has no high-confidence finding and the hand-written cases pass.
 
-### D4. Kotlin/Native rules
+### D4. Kotlin/Native rules (cdxgen/cdxgen-plugins-bin#188)
 
 ScopeEscape and KN-001 and KN-002 on the syntax tier, matching `kotlinx.cinterop` names through imports. Done when the hand-written cases pass and KaMPKit is triaged. Whether the resolved tier can analyse native source sets with klibs is measured and recorded.
 
-### D5. JVM corpus arms
+### D5. JVM corpus arms (cdxgen/cdxgen-plugins-bin#189)
 
 The advisory, JDK and real-project arms, their manifest entries and digests, and the split between `corpusQuick` and `corpusFull`.
 
