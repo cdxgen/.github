@@ -1,0 +1,22 @@
+plans/cdxgen-callsites-evidence.md
+  s_e0fb6d4d5e084d::t_10a3b2f0dee03b 42-52
+  s_e0fb6d4d5e084d::t_0a4de5182e687d 74
+  s_e0fb6d4d5e084d::t_2579a3924027c1 84-85
+  s_e0fb6d4d5e084d::t_3576088e075352 103-104,116,126-130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b717bd15a2618998fcf0d360baa5dbd4cb797979",
+  "prompts": {},
+  "sessions": {
+    "s_e0fb6d4d5e084d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "06e4857c-fb8c-4fa8-b823-49c581ab0978",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
