@@ -39,18 +39,17 @@ components the slice cannot see.
 
 ## Approach
 
-**Land on master, switched on by the installed atom.** cdxgen pins `@appthreat/atom` 3.1.1, which
-has no callsites for languages other than JavaScript, and atom 4 is not yet released. Every change
-is switched on by what the installed atom offers, as `atomCompileCommandsArgs` and `atomBomFileArgs`
-in `lib/inventory/atomUtils.js` already do: `atomOptions().has("--also-callsites")` means atom 4.
-With atom 3 cdxgen behaves exactly as today, and that is tested.
+**Build on atom 4 directly.** cdxgen pins `@appthreat/atom` 4.0.0 (cdxgen/cdxgen#4779) and no
+longer starts atom to find out what it supports: `atomFrontendArgKeys` and `atomOptions` are gone,
+and atom 4.0.0 is the documented minimum. The work here therefore needs no switch on the installed
+atom and no atom 3 code path. A slices file an older atom wrote and the user passes with
+`--usages-slices-file` alone still gives occurrences, as it does today.
 
-**One atom build for both slices.** With atom 4 the usages run writes the callsites slice too
-(`atom usages --also-callsites <file>`), so the atom is built and tagged once. A separate
-`callsites` run remains only as the JavaScript fallback for an atom without the option. A
-`--callsites-slices-file` given by the user is reused, never overwritten. `atomBomFileArgs` passes
-`--bom-file` to the usages and callsites runs as well as reachables, so atom can fill a record's
-`purl`.
+**One atom build for both slices.** The usages run writes the callsites slice too
+(`atom usages --extract-endpoints --also-callsites <file>`), so the atom is built and tagged once,
+and the separate JavaScript `callsites` run goes away. A `--callsites-slices-file` given by the user
+is reused, never overwritten. `atomBomFileArgs` passes `--bom-file` to the usages run as well as
+reachables, so atom can fill a record's `purl`.
 
 **Attribution order.** For each record: the record's `purl` when it names a component of the BOM;
 otherwise the ecosystem rule below; otherwise no component, and the record is counted as
@@ -72,7 +71,7 @@ filled by a new heuristic. For C/C++, the resolver may need the absolute path of
 record resolved to; if a record kind lacks it, atom adds the field (atom and cdxgen change together,
 with no schema versioning).
 
-**Added first, default later.** Until D4, callsites records add `file#line` locations to the
+**Added first, default later.** Until D4, callsites records add use-site occurrences to the
 occurrences that `usages` gives, as JavaScript does today. D4 switches the source once every
 language meets its targets.
 
@@ -82,7 +81,8 @@ language meets its targets.
 
 Python, Java source, JAR and APK, PHP, Ruby and C/C++, from the same atom through
 `usages --also-callsites`, with `--bom-file` passed. Done when `--evidence` writes a callsites slice
-for each language with atom 4, and the BOM is unchanged with atom 3.
+for each language from one atom start per project, and a run given only a usages slices file still
+gives the occurrences it gives today.
 
 ### D2. Attribute records to components per ecosystem (cdxgen/cdxgen#4691)
 
@@ -100,7 +100,8 @@ member read thirty times, cannot be told apart. evinse keeps one occurrence per 
 slice does (decision 0001 in AppThreat/.github), and does not collapse repeated reads of a member.
 A tool that wants one row per file or per member can group on `symbol`. Done when poku tests show
 two uses on one line as two occurrences with different `offset` values, and an occurrence seeded
-from an input BOM without these fields is not duplicated by the slice's version of it.
+from an input BOM without these fields is not duplicated by the slice's version of it. This part
+landed with cdxgen/cdxgen#4727 (cdxgen/cdxgen#4726).
 
 ### D3. Filters and annotations (cdxgen/cdxgen#4692)
 
@@ -112,7 +113,7 @@ Every location that enters the occurrence set is written with `/`, whatever its 
 slashes, so one place is counted twice: on ngx-admin 965 to 1111 of the occurrences in three evinse
 runs were such duplicates (cdxgen/cdxgen#4693, comment 6634492064). Done when a poku test seeds a
 BOM with backslash locations, merges a slice with forward slashes for the same places, and gets one
-occurrence for each.
+occurrence for each. This part landed with cdxgen/cdxgen#4727.
 
 ### D4. Occurrences from callsites by default (cdxgen/cdxgen#4693)
 
@@ -122,8 +123,11 @@ occurrence recall against the ground truth is at least the slice's.
 
 ## Risks and open questions
 
-- Repotests in CI use the pinned atom 3.1.1, so assertions that need atom 4 skip themselves until
-  cdxgen moves its pin to an atom 4 release. They are run locally with `ATOM_CMD` until then.
+- atom 4.0.0 has known gaps that change evidence on some projects: PHP `vendor/` is dependency
+  code (AppThreat/atom#394), reachables finds no flows on express and a Composer project
+  (AppThreat/atom#395), and JavaScript usages on express has no user-defined types
+  (AppThreat/atom#396). Comparisons against atom 3 output should name these rather than count them
+  as callsites regressions.
 - Each slice is a separate process with its own 20-minute budget; one build for usages and
   callsites changes how evinse accounts for timeouts.
 - The ground truth and the scorer live in a private harness in AppThreat (decision 0001); the
