@@ -100,7 +100,7 @@ romi evaluates patina_ffs for the volume walker before writing its own (see the 
 ## Risks and open questions
 
 - **Undocumented vendor formats.** AMI NVAR, Aptio capsules, Insyde and Phoenix variants, and some PSP entry types are documented only by community research. Implementations should follow public specifications where they exist, and check the licences of reference tools (for example PSPTool and the CSME research tools) before studying their code closely.
-- **CSME and PSP depth.** Their internal formats change across generations. The goal for 13.8.0 is versions and partition lists, not full decoding.
+- **CSME and PSP depth.** Their internal formats change across generations. The goal for 14.0.0 is versions and partition lists, not full decoding.
 - **Encrypted or compressed-unknown regions.** Some vendor regions are encrypted. romi reports them as opaque blobs with a diagnostic, which cdxgen surfaces as incomplete coverage.
 
 ## Outcome
