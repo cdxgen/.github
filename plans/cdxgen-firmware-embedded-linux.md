@@ -27,7 +27,7 @@ romi splits the image and extracts each filesystem into a sandboxed temporary di
 
 ### opkg
 
-opkg's `status` file and `info/*.control` files are plain text. They give name, version, architecture, source, licence, maintainer, dependencies and file lists, which is enough for a proper dependency graph. The open decision is the purl. The purl specification has no `opkg` type, so the choice is between `pkg:generic/openwrt/<name>@<version>` with qualifiers and proposing a type upstream. cdxgen/cdxgen#4634 decides and documents. OpenWrt is moving to APK in newer releases, which cdxgen already reads, so both paths are tested.
+opkg's `status` file and `info/*.control` files are plain text. They give name, version, architecture, source, licence, maintainer, dependencies and file lists, which is enough for a proper dependency graph. The open decision is the purl. The purl specification has no `opkg` type, so the choice is between `pkg:generic/openwrt/<name>@<version>` with qualifiers and proposing a type upstream. cdxgen/cdxgen#4634 decides and documents. OpenWrt is moving to APK in newer releases. cdxgen reads the apk installed database for host and OS BOMs of Alpine-style systems today, but not from an unpacked OpenWrt image, so covering it is part of this work and both package paths are tested.
 
 ### Components without a package database
 

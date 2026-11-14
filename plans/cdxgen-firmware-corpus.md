@@ -85,7 +85,7 @@ Answer-key assertions and snapshots in repotests, fast on pull requests and comp
 
 ### D3. Benchmark (cdxgen/cdxgen#4644)
 
-A one-command harness and published results for 13.8.0.
+A one-command harness and published results for 14.0.0.
 
 ## Risks and open questions
 
