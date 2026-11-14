@@ -68,7 +68,7 @@ Parsing hostile binary formats happens only in romi, which is written in Rust wi
 The model is decided in cdxgen/cdxgen#4622 and written down in `docs/FIRMWARE.md` before the emitters are built. The proposal:
 
 - **Containment as nesting.** The image is `metadata.component` with type `firmware`. Regions, volumes, files, partitions, filesystems and modules are nested `components`. The dependency graph is reserved for real dependencies, such as UEFI dependency expressions or shared libraries.
-- **Types.** `firmware` for images, regions, volumes and vendor blobs. `device-driver` for PEIMs and DXE, SMM and MM drivers. `application` for UEFI applications. `operating-system` for kernels. `data` for variable stores. `cryptographic-asset` for certificates. cdxgen generates spec 1.6, 1.7 and 2.0, and all three carry these types. What a downgrade below 1.6 should do with the types the target lacks is an open question, recorded with the risks below.
+- **Types.** `firmware` for images, regions, volumes and vendor blobs. `device-driver` for PEIMs and DXE, SMM and MM drivers. `application` for UEFI applications. `operating-system` for kernels. `data` for variable stores. `cryptographic-asset` for certificates. Firmware BOMs are supported at spec 1.6, 1.7 and 2.0, the versions cdxgen generates, and all three carry these types. Converting a firmware BOM below 1.6 is out of scope.
 - **Identity.** Deterministic `bom-ref` values built from the image's SHA-256 and the node path. Package URLs only where a real package identity exists: `pkg:github/tianocore/edk2@<tag>#<Package>/<Module>` for EDK II modules of a known release, `pkg:swid/...` for imported CoSWID tags, and the existing distribution purls for embedded Linux packages. A component without reliable identity has no purl.
 - **Properties.** `cdx:firmware:kind`, `format`, `path`, `offset`, `size`, `compression`, `guid`, `fileType`, `esrtGuid`, `esrtVersion`, `edk2:release`, `edk2:package`, `debugPath`, `sbomSource`, `signature:*` and `diagnostic`.
 - **Evidence.** Identity evidence names the technique and the value. Occurrences carry the node path as location and the byte offset. At spec 2.0 the same facts become attributed claims, building on cdxgen/cdxgen#4591.
@@ -89,8 +89,7 @@ With `--deep`, OS, rootfs and container scans look for firmware files installed 
 | Format detection | every corpus format, plus ELF, PE, ZIP and random files | correct format, with no false positives |
 | Directory scan | directory with OVMF, a coreboot ROM and an OpenWrt image | one BOM, three nested image components |
 | Deep OS scan | rootfs fixture with an OVMF package installed | firmware BOM nested under the package |
-| Model validation | Ubuntu `QEMU_EFI.fd` BOM | valid at spec 1.6, 1.7 and 2.0, the versions cdxgen generates |
-| Downgrade measurement | corpus BOMs converted to each older target | loss per target measured by type, recorded for cdxgen/cdxgen#4622 |
+| Model validation | Ubuntu `QEMU_EFI.fd` BOM | valid at spec 1.6, 1.7 and 2.0, the supported versions |
 | Determinism | same image scanned twice | identical BOM apart from serial number and timestamp |
 | romi missing | `ROMI_CMD` set to a missing path | image component with hashes, an incompleteness note, and exit code 0 |
 | Bad report | romi output that fails schema validation | named error, no partial BOM |
@@ -121,7 +120,6 @@ A firmware guide with a worked CVE-2026-97631 example, and updated agent skills.
 ## Risks and open questions
 
 - **romi timing.** cdxgen 14.0.0 needs a cdxgen-plugins-bin release with romi, whose work sits on that repository's 4.5.0 milestone. If romi slips, 14.0.0 can still ship the project type, the model and the fallback, but the result would be thin. The romi foundation epic should be scheduled first.
-- **Type downgrade.** Below 1.6, reached only through `cdx-convert`, the spec-version compatibility stage filters out components whose type the target lacks. For firmware that may be the wrong default: a stand-in BOM carrying one component of each model type keeps everything except `cryptographic-asset` at 1.5, and at 1.4 keeps only `firmware` and `application`, so the drivers, variable stores and certificates that make a firmware SBOM worth having are gone. Whether to keep dropping, to map down and record the intended type in a property, or to refuse the downgrade is deliberately left open: cdxgen/cdxgen#4622 answers it from real corpus BOMs, converted to each older target and measured for what every target loses, and from how consumers such as Dependency-Track treat a mapped-down component against a missing one.
 - **Model churn.** Choices like `device-driver` versus `firmware` for modules are hard to change once Dependency-Track users rely on them. The model issue should get review from people who consume firmware SBOMs, for example LVFS and fwupd maintainers and OEM PSIRTs, before the emitters are merged.
 - **Size.** A server firmware image can contain several hundred modules, and an embedded image tens of thousands of files. BOM size and cdxi performance need watching, and options to collapse levels (for example `--firmware-depth modules`) may be needed.
 - **Sandboxing on macOS and Windows.** safer-exec is strongest on Linux. On other platforms romi's own limits are the main protection, which the threat model must state.
