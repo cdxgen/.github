@@ -1,0 +1,30 @@
+plans/cdxgen-firmware-corpus.md
+  s_790aedb3119d39::t_92ccbf8383abca 88
+plans/romi-uefi-formats.md
+  s_790aedb3119d39::t_efab2f3e6d2496 103
+plans/romi-foundation.md
+  s_790aedb3119d39::t_119bffd7bf0161 14
+plans/cdxgen-firmware-sbom.md
+  s_790aedb3119d39::t_1d461bccfd9074 71
+  s_790aedb3119d39::t_b2e1d2b033267e 92
+  s_790aedb3119d39::t_bbe89d6f378421 21
+  s_790aedb3119d39::t_64aae75628e5b7 122
+plans/cdxgen-firmware-embedded-linux.md
+  s_790aedb3119d39::t_50e71e6a999757 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1d9dd32515c5b4d0288585de84e6de192c95433a",
+  "prompts": {},
+  "sessions": {
+    "s_790aedb3119d39": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "sess_ad434648-2a8a-4978-84cb-207d4726798d",
+        "model": "GLM-5.3"
+      },
+      "human_author": "Team AppThreat <cloud@appthreat.com>"
+    }
+  }
+}
