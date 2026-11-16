@@ -58,7 +58,7 @@ Each repository then adds the [project-sync starter workflow](../workflow-templa
 
 A public repository also needs an Actions event policy that allows the `pull_request_target` event. GitHub now attaches a default policy to public repositories that blocks the event unless an Actions event policy that applies to the repository allows it, and a run the default blocks ends as a startup failure before any job starts. Create one policy per repository, scoped so that it covers only the sync workflow:
 
-```
+```json
 {
   "name": "Allow project-sync on pull_request_target",
   "enforcement": "active",
@@ -79,11 +79,13 @@ A public repository also needs an Actions event policy that allows the `pull_req
 }
 ```
 
-```
+Save it as `policy.json` and create it with:
+
+```bash
 gh api repos/OWNER/REPO/actions/policies -X POST -H "X-GitHub-Api-Version: 2026-03-10" --input policy.json
 ```
 
-The `workflow_path` condition limits the rule to the sync workflow, and it is what keeps the rest of the repository working: `allowed_events` is an allowlist for every workflow the policy covers, so a policy aimed at all workflows would block `push`, `pull_request` and every other trigger. The event list names each trigger the sync workflow uses: `issues` for the label events, `pull_request_target` for the pull request events, and `workflow_call` for the reusable workflow the starter calls. An organization owner can apply one policy to every repository at once by adding `"repository_name": {"include": ["~ALL"]}` to the conditions and calling `/orgs/OWNER/actions/policies` instead, which also covers repositories that adopt the starter later; creating it needs the `admin:org` scope. The API is described under [Actions policies](https://docs.github.com/en/rest/actions/policies).
+The `workflow_path` condition limits the rule to the sync workflow, and with it in place the repository's other workflows run as before. The [Actions policies API reference](https://docs.github.com/en/rest/actions/policies) describes `allowed_events` as the events that can trigger the workflows a policy covers, so a policy without the condition is likely to stop `push`, `pull_request` and other events from starting those workflows. The event list names each trigger the sync workflow uses: `issues` for the label events, `pull_request_target` for the pull request events, and `workflow_call` for the reusable workflow the starter calls. An organization owner can instead create a single policy for every repository by adding `"repository_name": {"include": ["~ALL"]}` to the conditions and posting it to `/orgs/OWNER/actions/policies`, which also covers repositories that adopt the starter later and needs a token with the `admin:org` scope.
 
 Another organization keeps its own `project/schema.json` in its own `.github` repository and runs these same scripts. The scripts take the schema from `--schema <path>` or the `PROJECT_SCHEMA` variable, and the reusable workflow takes an optional `schema-repository` input that fetches `project/schema.json` from that repository. For example, `node project/setup.mjs --schema ../../owasp/.github/project/schema.json` prepares that organization's board.
 
