@@ -8,6 +8,10 @@ name: Project sync
 # talks to the GitHub GraphQL API. That is what makes pull_request_target safe
 # here, see
 # https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/
+#
+# A public repository also needs an Actions event policy that allows
+# pull_request_target for the caller's workflow, see the section
+# "Turning on the optional sync" in project/README.md.
 on:
   workflow_call:
     inputs:

@@ -2,6 +2,10 @@ name: Project sync
 
 # Keeps the cdxgen organization project in step with issues and pull requests.
 # See https://github.com/cdxgen/.github/tree/main/project
+#
+# A public repository must also allow the pull_request_target event through an
+# Actions event policy, see the section "Turning on the optional sync" in
+# project/README.md.
 on:
   issues:
     types: [labeled, unlabeled]

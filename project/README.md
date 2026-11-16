@@ -56,6 +56,35 @@ The workflows' automatic token cannot write to an organization project, because 
 
 Each repository then adds the [project-sync starter workflow](../workflow-templates/project-sync.yml), which calls the reusable workflow in [.github/workflows/project-sync.yml](../.github/workflows/project-sync.yml). The project token may not reach a repository, so the starter grants its job `pull-requests: write` and passes the repository's own token as the `REPO_TOKEN` secret, which the sync uses only to set a pull request's milestone. A repository on an older copy of the starter keeps working and leaves milestones alone. The reusable workflow does not check out the calling repository, so it is safe to trigger from `pull_request_target`; the [GitHub Security Lab write-up](https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/) explains the risk it avoids. Without the secret the workflow prints a message and does nothing. The starter passes `PROJECT_NUMBER` to the reusable workflow as a secret, because a secret cannot be passed through an input; the `project-number` input remains for callers that keep the number elsewhere. To save runs, the starter does not trigger on pull request `labeled` events, which a pull request opened with several labels fires once per label, and it skips `edited` events that leave the description, where the closing keywords live, unchanged. Two events for the same item can overlap, in which case the later write wins for that field; the rules are written so that this never loses a status a person chose. Issues of other repositories that call the starter are added to the board whether or not the repository is linked to the project, so add the starter only to the repositories that should appear.
 
+A public repository also needs an Actions event policy that allows the `pull_request_target` event. GitHub now attaches a default policy to public repositories that blocks the event unless an Actions event policy that applies to the repository allows it, and a run the default blocks ends as a startup failure before any job starts. Create one policy per repository, scoped so that it covers only the sync workflow:
+
+```
+{
+  "name": "Allow project-sync on pull_request_target",
+  "enforcement": "active",
+  "conditions": {
+    "workflow_path": {
+      "include": [".github/workflows/project-sync.yml"],
+      "exclude": []
+    }
+  },
+  "rules": [
+    {
+      "type": "restrict_action_events",
+      "parameters": {
+        "allowed_events": ["issues", "pull_request_target", "workflow_call"]
+      }
+    }
+  ]
+}
+```
+
+```
+gh api repos/OWNER/REPO/actions/policies -X POST -H "X-GitHub-Api-Version: 2026-03-10" --input policy.json
+```
+
+The `workflow_path` condition limits the rule to the sync workflow, and it is what keeps the rest of the repository working: `allowed_events` is an allowlist for every workflow the policy covers, so a policy aimed at all workflows would block `push`, `pull_request` and every other trigger. The event list names each trigger the sync workflow uses: `issues` for the label events, `pull_request_target` for the pull request events, and `workflow_call` for the reusable workflow the starter calls. An organization owner can apply one policy to every repository at once by adding `"repository_name": {"include": ["~ALL"]}` to the conditions and calling `/orgs/OWNER/actions/policies` instead, which also covers repositories that adopt the starter later; creating it needs the `admin:org` scope. The API is described under [Actions policies](https://docs.github.com/en/rest/actions/policies).
+
 Another organization keeps its own `project/schema.json` in its own `.github` repository and runs these same scripts. The scripts take the schema from `--schema <path>` or the `PROJECT_SCHEMA` variable, and the reusable workflow takes an optional `schema-repository` input that fetches `project/schema.json` from that repository. For example, `node project/setup.mjs --schema ../../owasp/.github/project/schema.json` prepares that organization's board.
 
 To try the sync without writing, set `DRY_RUN=1` and run `node project/sync.mjs` with `GITHUB_EVENT_NAME` and `GITHUB_EVENT_PATH` pointing at a saved event payload.
