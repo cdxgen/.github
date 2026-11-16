@@ -1,0 +1,21 @@
+plans/cdxgen-firmware-sbom.md
+  s_790aedb3119d39::t_d82eeca09b4692 71
+  s_790aedb3119d39::t_e21a4bb8228d9b 93
+  s_790aedb3119d39::t_c29eb9ad2da987 124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2e3e225a619f8f09e72f4e1daecc64a74bff86f0",
+  "prompts": {},
+  "sessions": {
+    "s_790aedb3119d39": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "sess_ad434648-2a8a-4978-84cb-207d4726798d",
+        "model": "GLM-5.3"
+      },
+      "human_author": "Team AppThreat <cloud@appthreat.com>"
+    }
+  }
+}
