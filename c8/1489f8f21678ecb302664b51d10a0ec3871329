@@ -1,0 +1,19 @@
+plans/cdxgen-actions-lockfile-rollout.md
+  s_3a30db634d85ac::t_6353972ac8deda 1-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c81489f8f21678ecb302664b51d10a0ec3871329",
+  "prompts": {},
+  "sessions": {
+    "s_3a30db634d85ac": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "sess_dwf-dwfrun-762b1b17-74d9-4cb7-8589-feaadd54f154-actor_3_1",
+        "model": "GLM-5.3-Flash"
+      },
+      "human_author": "Team AppThreat <cloud@appthreat.com>"
+    }
+  }
+}
