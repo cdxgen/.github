@@ -1,0 +1,6 @@
+{
+  "name": "Verify actions lock",
+  "description": "Verify the GitHub Actions dependency lockfile on pull requests and pushes that touch workflows or composite actions.",
+  "iconName": "octicon shield-check",
+  "categories": ["Automation"]
+}
