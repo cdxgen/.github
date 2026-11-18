@@ -1,0 +1,21 @@
+plans/rusi-macro-expansion.md
+  s_6dade5ff88eb3a::t_c71d9e2139ba2b 1-104
+plans/rusi-compiler-macro-attribution.md
+  s_6dade5ff88eb3a::t_16dcff0cf1d244 1-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "228779827eaf1d7d6c3910a55d8bc0da649a0810",
+  "prompts": {},
+  "sessions": {
+    "s_6dade5ff88eb3a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b7a598a-a863-43fb-8acc-db697cc4618b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
