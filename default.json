@@ -1,0 +1,30 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate preset for the cdxgen organization. A repository extends it with \"github>cdxgen/.github\" in its renovate.json extends array.",
+  "constraints": {
+    "ghActionsLock": "v0.4.1"
+  },
+  "packageRules": [
+    {
+      "description": "all GitHub Actions",
+      "extends": ["helpers:pinGitHubActionDigests"],
+      "rebaseWhen": "conflicted"
+    }
+  ],
+  "customManagers": [
+    {
+      "description": "Move the pinned gh-actions-lock release in constraints.ghActionsLock and the install pin in the shared verify workflow together",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^default\\.json$/",
+        "/^\\.github\\/workflows\\/verify-actions-lock\\.yml$/"
+      ],
+      "matchStrings": [
+        "\"ghActionsLock\":\\s*\"(?<currentValue>v\\d+\\.\\d+\\.\\d+)\"",
+        "gh extension install github/gh-actions-lock --pin (?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-tags",
+      "depNameTemplate": "github/gh-actions-lock"
+    }
+  ]
+}
