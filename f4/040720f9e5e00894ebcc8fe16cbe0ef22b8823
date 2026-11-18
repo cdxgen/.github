@@ -1,0 +1,23 @@
+workflow-templates/verify-actions-lock.yml
+  s_bfa5b17deefaec::t_a1a0b9b1914742 1-28
+.github/workflows/verify-actions-lock.yml
+  s_bfa5b17deefaec::t_aaaa0df6edcdb0 1-37
+workflow-templates/verify-actions-lock.properties.json
+  s_bfa5b17deefaec::t_d0d22452af6a63 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f4040720f9e5e00894ebcc8fe16cbe0ef22b8823",
+  "prompts": {},
+  "sessions": {
+    "s_bfa5b17deefaec": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "sess_dwf-dwfrun-762b1b17-74d9-4cb7-8589-feaadd54f154-actor_5_1",
+        "model": "GLM-5.3-Flash"
+      },
+      "human_author": "Team AppThreat <cloud@appthreat.com>"
+    }
+  }
+}
