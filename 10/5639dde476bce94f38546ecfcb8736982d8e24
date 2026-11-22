@@ -1,0 +1,16 @@
+plans/rusi-dependency-cache.md
+  h_0926447d100ad2 5
+plans/rusi-dependency-performance.md
+  h_0926447d100ad2 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "105639dde476bce94f38546ecfcb8736982d8e24",
+  "prompts": {},
+  "humans": {
+    "h_0926447d100ad2": {
+      "author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
