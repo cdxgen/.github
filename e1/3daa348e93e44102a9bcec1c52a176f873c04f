@@ -1,0 +1,21 @@
+plans/rusi-dependency-cache.md
+  s_dfeff8ab5b0de4::t_86ad5c2ae1a6c6 1-104
+plans/rusi-dependency-performance.md
+  s_dfeff8ab5b0de4::t_260c25a83ff452 1-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e13daa348e93e44102a9bcec1c52a176f873c04f",
+  "prompts": {},
+  "sessions": {
+    "s_dfeff8ab5b0de4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fd054b4f-d6e1-4d5e-9795-9ed8d3c151b4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
