@@ -62,7 +62,7 @@ Fold the module tree walk and the macro pre-pass into one parse that extracts `m
 
 ### D3. Call graph cost
 
-Profile `build_call_graph` on the medium tier with `--deps`. The likely costs are string-keyed indexes (`build_local_function_index` maps names to vectors of string ids) and the fan-out of ambiguous call sites. Intern function ids and canonical names to integer handles where the profile points, keeping the string form only at report time. Finished when the call graph pass is at least as fast as D1's target and the reports are unchanged.
+This is the largest cost in `security-deps` mode: on mini-redis, the call graph took 332 s of a 346 s run, while the summary fixpoint took 7 s. Profile `build_call_graph` on mini-redis with `--deps --dataflow security-deps`, and on the medium tier with `--deps`. The likely costs are string-keyed indexes (`build_local_function_index` maps names to vectors of string ids) and the fan-out of ambiguous call sites. Intern function ids and canonical names to integer handles where the profile points, keeping the string form only at report time. Finished when the call graph pass is at least as fast as D1's target and the reports are unchanged.
 
 ### D4. Peak memory in the stable backend
 
@@ -74,7 +74,7 @@ Today `security-deps` lowers and summarises every function body in every depende
 
 ## Risks and open questions
 
-**The `security-deps` baseline.** The run on mini-redis was still going after 280 s with rusi 4.3.1. The 4.4.0 figure will be added to the epic from D1. If D5 cannot bring it within a few times the light-tier run, cdxgen should keep `security-deps` out of its default profiles.
+**The `security-deps` baseline.** With rusi 4.4.0, `--deps --dataflow security-deps` on mini-redis took 346 s, peaked at 2,444 MB and wrote a 272 MB report. The call graph pass took 332 s of that, and the data-flow pass 7 s, so D3 and D5 matter far more here than the summary cache in the cache plan. If D3 and D5 together cannot bring the run within a few times the light-tier run, cdxgen should keep `security-deps` out of its default profiles. The report size may also need a look: most of it is likely dependency-internal edges that cdxgen does not use.
 
 **D5 and over-approximated edges.** When the resolver cannot pin a trait call to one implementation, it emits an edge to every candidate. Reachability over those edges may pull in most of a large dependency. D1's data for the medium tier will show whether the reachable set is small enough to matter. If it is not, D5 should cap fan-out for dependency-internal calls the way `--max-call-candidates` caps it for the workspace.
 
