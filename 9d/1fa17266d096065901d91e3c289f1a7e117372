@@ -1,0 +1,20 @@
+plans/rusi-dependency-performance.md
+  s_dfeff8ab5b0de4::t_88c0519b16e7fa 77
+  s_dfeff8ab5b0de4::t_8fac26322a05ba 65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9d1fa17266d096065901d91e3c289f1a7e117372",
+  "prompts": {},
+  "sessions": {
+    "s_dfeff8ab5b0de4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fd054b4f-d6e1-4d5e-9795-9ed8d3c151b4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Prabhu Subramanian <prabhu@appthreat.com>"
+    }
+  }
+}
