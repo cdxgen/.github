@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/EPIC |
+| Epic | https://github.com/cdxgen/cdxgen-plugins-bin/issues/228 |
 | Owner | @prabhu |
 | AI use | Auto |
 | Corpus | none (the small and medium tiers of `thirdparty/rusi/corpus.toml`, pinned by commit, with dependency sources pinned by each project's `Cargo.lock`) |
